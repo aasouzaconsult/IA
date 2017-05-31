@@ -7,6 +7,15 @@
 # 84 - Documentos - Query 41
 # Termos - 7878
 
+################
+# Observações  #
+################
+# - Aula 31.05
+
+# Matriz de Frequencia e normalizar
+# BM25 
+# OR  com Ranqueamento + um corte
+
 import nltk
 import string
 import numpy as np
@@ -94,7 +103,7 @@ def generate_matrix():
     matrix_tt = np.dot(np.transpose(matrix_dt), matrix_dt)
     save_object(matrix_tt, 'matrix_npl.tt')
     pass
-
+	
 # Expandindo a consulta (5)
 def search_expanded(query, terms_dt, matrix_tt):
     terms = []
@@ -109,19 +118,20 @@ def search_expanded(query, terms_dt, matrix_tt):
     pass
     return terms
 
-# So a consulta mesmo - Implementando
+# Consulta normal
 def search (query, terms_dt, matrix_tt):
-    terms = []
+    termss = []
     for i in query:
         if i in terms_dt:
             key = terms_dt.index(i)
-            terms_recommended = np.sort(matrix_tt[key])[:, len(matrix_tt)-expansion:len(matrix_tt)]
-            for j in terms_recommended.tolist()[0]:
-                terms.append(matrix_tt[key, :].tolist()[0].index(j))
+            termsO = np.matrix(matrix_tt[key,key])
+            for j in termsO.tolist()[0]:
+                termss.append(matrix_tt[key, :].tolist()[0].index(j))
             pass
         pass
     pass
-    return terms	
+    return termss
+termss = search(query_token.split(' '), terms_dt, matrix_tt)
 
 # Documentos relevantes
 relevantes = []
@@ -137,7 +147,6 @@ def relevants_documents():
 
         line = np.array(textr.split(' ')).tolist()
         key = int(line[0])
-        # relevants_resume[key] = [line[1:999]]
         for j in range(len(line)-1):
             if key in relevants_resume:
                 relevants_resume[key].append(int(line[j+1]))
@@ -157,6 +166,7 @@ def main():
     for i in xrange(0,len(querys)):
         query_token          = tokenize_stopwords_stemmer(querys[i], stemmer)
         terms                = search_expanded(query_token.split(' '), terms_dt, matrix_tt)
+		termss               = search(query_token.split(' '), terms_dt, matrix_tt)
 	    #terms               = search_expanded(query_token.split(' '), Termos, KT)
         documents_retrieval  = retrieval(terms, matrix_dt)
 	    #documents_retrieval = retrieval(terms, TfIdf)
