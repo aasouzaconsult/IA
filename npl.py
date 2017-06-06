@@ -286,4 +286,5 @@ def main():
     print "Cobertura.: " + str(round((mean_recall1/len(querys)*100),2)) + "%"
     print "Acuracia..: " + str(round((mean_acuracy1/len(querys)*100),2)) + "%"
 
+# Executar
 main()
