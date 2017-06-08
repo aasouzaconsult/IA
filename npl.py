@@ -261,7 +261,6 @@ def main():
         mean_precision3 = mean_precision3 + (float(TP3)/float(TP3+FP3))
         mean_recall3    = mean_recall3    + (float(TP3)/float(TP3+FN3))
         mean_acuracy3   = mean_acuracy3   + (float(TP3+TN3)/float(TP3+TN3+FP3+FN3))
-
         pass
     pass
     print "*******************************"
