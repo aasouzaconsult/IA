@@ -22,31 +22,27 @@ querys     = []
 querysOri  = []
 expansion  = 5 # Resultado bom com 2
 text_trans = []
+pc1        = 0
+pc2        = 1
 
 #---------------------------------------------------------------------------------------#
-def retrieval(terms,matrix_dt, terms_dt, query):
+def retrieval(terms, matrix_dt): # def retrieval(terms,matrix_dt, terms_dt, query): 
     result_docs = []
     for term in terms:
-        sum_vector = np.sum(matrix_dt[:,term])
+        sum_vector = np.sum(matrix_dt[:,term]) # Quantos documentos para cada termo
         norm = dict()
-        for i in np.where(matrix_dt[:,term]>1)[0].tolist():
-            norm[i] = float(matrix_dt[i, term])/float(sum_vector)
+        for i in (np.where(matrix_dt[:,term]>pc1)[0]+1).tolist():   # documentos do termo
+            norm[i] = float(matrix_dt[i-1, term])/float(sum_vector) # frequencia do termos no documento
         norm_sort = sorted(norm.items(), key=operator.itemgetter(1),reverse=True)
         sum_norm_sort = 0
         for i in norm_sort:
             sum_norm_sort = sum_norm_sort + i[1]
             result_docs.append(i[0])
-            if sum_norm_sort >= 0.5:#float(len(query))/float(len(terms)):
+            if sum_norm_sort >= pc2: #float(len(query))/float(len(terms)):
                 break
             pass
-    return set(result_docs)
+    return set(result_docs)	
 
-def retrieval1(terms,matrix_dt):
-    result_docs = []
-    for term in terms:
-        result_docs = result_docs + (np.where(matrix_dt[:,term]>0)[0]+1).tolist() # Coluna (varre a coluna do termo e pega os documentos +1 porque inicia com 0)
-    return set(result_docs) # set - Distinct
-	
 #---------------------------------------------------------------------------------------#
 def tokenize_stopwords_stemmer(text, stemmer, query):
     no_punctuation = text.translate(None, string.punctuation)
@@ -110,7 +106,6 @@ def generate_matrix():
     document_term = CountVectorizer()
     # Salvando em arquivo
     matrix_document_term = document_term.fit_transform(text_trans)
-    # matrix_document_term = document_term.fit_transform(text_trans[0:5000]) # Diminuindo para validacao
     save_object(document_term.get_feature_names(), 'terms_npl.dt')
     matrix_dt = np.matrix(matrix_document_term.toarray())
     save_object(matrix_dt, 'matrix_npl.dt')
@@ -133,16 +128,16 @@ def search (query, terms_dt, matrix_tt):
     pass
     return termss
 
-# Expandir a consulta
+# Consulta expandida
 def search_expanded(query, terms_dt, matrix_tt):
     terms = []
     for i in query:
-        if i in terms_dt:
-            key = terms_dt.index(i)
+        if i in terms_dt:#se botar nada a ver
+            key = terms_dt.index(i) # Pega a posicao que o termo se encontra
             terms_recommended = np.sort(matrix_tt[key])[:, len(matrix_tt)-expansion:len(matrix_tt)]
             for j in terms_recommended.tolist()[0]:
                 terms
-                terms.append(matrix_tt[key, :].tolist()[0].index(j))
+                terms.append(matrix_tt[key, :].tolist()[0].index(j)) # Retorna o indice da frequencia j
             pass
             if key in terms == False or expansion == 0:
                 terms.append(key)
@@ -194,20 +189,21 @@ def main():
     mean_acuracy2    = 0
     mean_precision3  = 0
     mean_recall3     = 0
-    mean_acuracy3    = 0	
+    mean_acuracy3    = 0
 
+    print "############################################"
     for i in xrange(0,len(querys)-1):
         query_token          = tokenize_stopwords_stemmer(querys[i], stemmer, True) # Sinonimos
         query_token2         = tokenize_stopwords_stemmer1(querys[i], stemmer)
 
-        # retrieval1
+        # retrieval
         terms                = search         (set(query_token2.split(' ')), terms_dt, matrix_tt) # Sem expansao
         terms1               = search_expanded(set(query_token2.split(' ')), terms_dt, matrix_tt) # Com expansao
         terms2               = search         (set(query_token.split(' ')), terms_dt, matrix_tt)  # Sem expansao + Sinonimos
         terms3               = search_expanded(set(query_token.split(' ')), terms_dt, matrix_tt)  # Com expansao + Sinonimos
 
         # Sem expansao
-        documents_retrieval  = retrieval1(terms, matrix_dt)
+        documents_retrieval  = retrieval(terms, matrix_dt)  # documents_retrieval  = retrieval(terms, matrix_dt, terms_dt, query_token2.split(' '))
         documents_relevants  = relevants_documents()[i+1]
         TP                   = len(documents_retrieval.intersection(documents_relevants))
         FP                   = len(documents_retrieval) - TP
@@ -217,12 +213,12 @@ def main():
         Acuracia2            = float(len(documents_retrieval.intersection(documents_relevants)) + amount_documents - len(documents_retrieval))/float(amount_documents)
         doc_rel_rec          = sorted(list(documents_retrieval.intersection(documents_relevants)))
 
-        mean_precision = mean_precision + (float(TP)/float(TP+FP))
-        mean_recall    = mean_recall    + (float(TP)/float(TP+FN))
-        mean_acuracy   = mean_acuracy   + (float(TP+TN)/float(TP+TN+FP+FN))
+        mean_precision       = mean_precision + (float(TP)/float(TP+FP))
+        mean_recall          = mean_recall    + (float(TP)/float(TP+FN))
+        mean_acuracy         = mean_acuracy   + (float(TP+TN)/float(TP+TN+FP+FN))
 
         # Com expansao
-        documents_retrieval1 = retrieval1(terms1, matrix_dt)
+        documents_retrieval1 = retrieval(terms1, matrix_dt)  # documents_retrieval1 = retrieval(terms1, matrix_dt, terms_dt, query_token2.split(' '))
         documents_relevants1 = relevants_documents()[i+1]
         TP1                  = len(documents_retrieval1.intersection(documents_relevants1))
         FP1                  = len(documents_retrieval1) - TP1
@@ -237,7 +233,7 @@ def main():
         mean_acuracy1   = mean_acuracy1   + (float(TP1+TN1)/float(TP1+TN1+FP1+FN1))
 
         # Sem expansao + Sinonimos
-        documents_retrieval2  = retrieval1(terms2, matrix_dt)
+        documents_retrieval2  = retrieval(terms2, matrix_dt)  # documents_retrieval2  = retrieval(terms2, matrix_dt, terms_dt, query_token.split(' '))
         documents_relevants2  = relevants_documents()[i+1]
         TP2                   = len(documents_retrieval2.intersection(documents_relevants2))
         FP2                   = len(documents_retrieval2) - TP2
@@ -252,7 +248,7 @@ def main():
         mean_acuracy2   = mean_acuracy2   + (float(TP2+TN2)/float(TP2+TN2+FP2+FN2))
 
         # Com expansao + Sinonimos
-        documents_retrieval3 = retrieval1(terms3, matrix_dt)
+        documents_retrieval3 = retrieval(terms3, matrix_dt)  # documents_retrieval3 = retrieval(terms3, matrix_dt, terms_dt, query_token.split(' '))
         documents_relevants3 = relevants_documents()[i+1]
         TP3                  = len(documents_retrieval3.intersection(documents_relevants3))
         FP3                  = len(documents_retrieval3) - TP3
@@ -265,6 +261,7 @@ def main():
         mean_precision3 = mean_precision3 + (float(TP3)/float(TP3+FP3))
         mean_recall3    = mean_recall3    + (float(TP3)/float(TP3+FN3))
         mean_acuracy3   = mean_acuracy3   + (float(TP3+TN3)/float(TP3+TN3+FP3+FN3))
+
         pass
     pass
     print "*******************************"
@@ -275,7 +272,7 @@ def main():
     print "Acurácia..: " + str(round((mean_acuracy/len(querys)*100),2)) + "%"
     print ""
     print "*******************************"
-    print "Modelo 2 - Com expansão (" + str(expansion2) +")"
+    print "Modelo 2 - Com expansão (" + str(expansion) +")"
     print "*******************************"
     print "Precisão..: " + str(round((mean_precision1/len(querys)*100),2)) + "%"
     print "Cobertura.: " + str(round((mean_recall1/len(querys)*100),2)) + "%"
@@ -289,7 +286,7 @@ def main():
     print "Acurácia..: " + str(round((mean_acuracy2/len(querys)*100),2)) + "%"
     print ""
     print "*******************************************"
-    print "Modelo 4 - Com expansão e com sinônimos (" + str(expansion2) +")"
+    print "Modelo 4 - Com expansão e com sinônimos (" + str(expansion) +")"
     print "*******************************************"
     print "Precisão..: " + str(round((mean_precision3/len(querys)*100),2)) + "%"
     print "Cobertura.: " + str(round((mean_recall3/len(querys)*100),2)) + "%"
