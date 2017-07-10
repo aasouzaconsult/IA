@@ -7,10 +7,14 @@
 # 84 - Documentos - Query 41
 # Termos - 7878
 
-################
-# Observacoes  #
-################
-# BM25 - Deixou mais lento
+# Script no GITHUB
+# https://github.com/aasouzaconsult/IA
+
+#############
+# Melhorias #
+#############
+# BM25 (Deixou mais lento)
+# Melhorar a precisão
 
 # Importações
 import nltk
@@ -26,6 +30,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 import sys 
 from time import time
 
+# Declaração de variáveis globais
 stemmer       = PorterStemmer()
 querys        = []
 querysOri     = []
@@ -43,61 +48,18 @@ grRecall1     = []
 grRecall2     = []
 grRecall3     = []
 grRecall4     = [] # BM25
+
+# Variáveis de parametros
 expansion     = 5      # Retornam os N documentos mais relevantes por cada termo
 pc1           = 0      # Parametro de configuração 1 ("Quantidade de Documentos por Termo") - Retrieval (Padrão: 0 - Todos)
 pc2           = 1      # Parametro de configuração 2 ("Peso")                               - Retrieval (Padrão: 1 - Todos) | (Padrão: 0.50 - Mais relevantes)
 pc3           = 100000 # Parametro de configuração 3 ("N maiores documentos retornados")    - Retrieval (Padrão: 100000 - Todos)
-#---------------------------------------------------------------------------------------#
-def retrieval(terms, matrix_dt):
-    result_docs = []
-    for term in terms:
-        sum_vector = np.sum(matrix_dt[:,term]) # Quantos documentos para cada termo
-        norm = dict()
-        for i in (np.where(matrix_dt[:,term]>pc1)[0]+1).tolist():   # documentos do termo
-            norm[i] = float(matrix_dt[i-1, term])/float(sum_vector) # frequencia do termos no documento
-        norm_sort = sorted(norm.items(), key=operator.itemgetter(1),reverse=True)[:pc3] # os pc3 primeiros (documentos)
-        sum_norm_sort = 0
-        for i in norm_sort:
-            sum_norm_sort = sum_norm_sort + i[1]
-            result_docs.append(i[0])
-            if sum_norm_sort >= pc2: # Relevancia (1 - Todos, 0.5 os 50% mais importantes)
-                break
-            pass
-    return set(result_docs)
 
-#---------------------------------------------------------------------------------------#
-# Com dicionários de sinônimos
-def tokenize_stopwords_stemmer(text, stemmer, query):
-    no_punctuation = text.translate(None, string.punctuation)
-    tokens = nltk.word_tokenize(no_punctuation)
-    text_filter = [w for w in tokens if not w in stopwords.words('english')]
-    text_final = ''
-    if query == True: # Se for query
-        for k in range(0, len(text_filter)):
-            for i in wn.synsets(text_filter[k]):
-                for s in i.lemma_names():
-                    text_filter.append(s)
-
-    for k in range(0, len(text_filter)):
-        text_final +=str(stemmer.stem(text_filter[k]))
-        if k != len(text_filter)-1:
-            text_final+=" "
-            pass
-    return text_final
-
-def tokenize_stopwords_stemmer1(text, stemmer):
-    no_punctuation = text.translate(None, string.punctuation)
-    tokens = nltk.word_tokenize(no_punctuation)
-    text_filter = [w for w in tokens if not w in stopwords.words('english')]
-    text_final = ''
-    for k in range(0, len(text_filter)):
-        text_final +=str(stemmer.stem(text_filter[k]))
-        if k != len(text_filter)-1:
-            text_final+=" "
-            pass
-    return text_final
-
-#---------------------------------------------------------------------------------------#
+###########
+# FUNÇÔES #
+###########
+#-------------------------------------------------------------------------------------------------------------#
+# Função para ler o arquivo de documentos (NPL), trata o documento, tokeniza, retira StopWords e faz o Stemmer
 def organizes_documents():
     files = open('npl/doc-text', 'r').read().split('/')
     for i in range(0,len(files)):
@@ -107,7 +69,8 @@ def organizes_documents():
         text_trans.append(tokenize_stopwords_stemmer(text.lower(), stemmer, False))
     generate_matrix()
 
-#---------------------------------------------------------------------------------------#
+#-----------------------------------------------------------#
+# Função para ler o arquivo de consultas (query) da coleção
 def organizes_querys():
     files = open('npl/query-text', 'r').read().split('/')
     for i in range(0,len(files)):
@@ -116,60 +79,8 @@ def organizes_querys():
         textq = textq.strip()
         querys.append(textq.lower())
 
-#---------------------------------------------------------------------------------------#
-def save_object(obj, filename):
-    with open('objects/'+filename, 'wb') as output:
-        pickle.dump(obj, output, pickle.HIGHEST_PROTOCOL)
-
-def load_object(filename):
-    with open(filename, 'rb') as input:
-        return pickle.load(input)
-
-def generate_matrix():
-    document_term = CountVectorizer()
-    # Salvando em arquivo
-    matrix_document_term = document_term.fit_transform(text_trans)
-    save_object(document_term.get_feature_names(), 'terms_npl.dt')
-    matrix_dt = np.matrix(matrix_document_term.toarray())
-    save_object(matrix_dt, 'matrix_npl.dt')
-    matrix_tt = np.dot(np.transpose(matrix_dt), matrix_dt)
-    save_object(matrix_tt, 'matrix_npl.tt')
-    pass
-
-#---------------------------------------------------------------------------------------#
-# Consulta normal
-def search (query, terms_dt, matrix_tt):
-    termss = []
-    for i in query:
-        if i in terms_dt:
-            key = terms_dt.index(i)
-            termsO = np.matrix(matrix_tt[key,key])
-            for j in termsO.tolist()[0]:
-                termss.append(matrix_tt[key, :].tolist()[0].index(j))
-            pass
-        pass
-    pass
-    return termss
-
-# Consulta expandida
-def search_expanded(query, terms_dt, matrix_tt):
-    terms = []
-    for i in query:
-        if i in terms_dt:
-            key = terms_dt.index(i) # Pega a posicao que o termo se encontra
-            terms_recommended = np.sort(matrix_tt[key])[:, len(matrix_tt)-expansion:len(matrix_tt)] # Final da Linha os 5 ultimos colunas (maiores)
-            for j in terms_recommended.tolist()[0]:
-                terms
-                terms.append(matrix_tt[key, :].tolist()[0].index(j)) # Retorna o indice da frequencia j
-            pass
-            if key in terms == False or expansion == 0:
-                terms.append(key)
-        pass
-    pass
-    return set(terms)
-
-#---------------------------------------------------------------------------------------#
-# Documentos relevantes
+#--------------------------------------------------------------#
+# Função para ler o arquivo de documentos relevantes da coleção
 def relevants_documents():
     relevants_resume = dict() # Vetor chave valor
     files = open('npl/rlv-ass', 'r').read().split('/')
@@ -189,16 +100,127 @@ def relevants_documents():
                 relevants_resume[key] = [int(line[j+1])]
             pass
     pass
-    return relevants_resume
+    return relevants_resume	
+
+#-----------------------------------------------------------------------------------------------#
+# Processo de geração das matrizes - DT (Documento-Termo), TT (Termo-Termo) e a Matriz de Termos
+def save_object(obj, filename):
+    with open('objects/'+filename, 'wb') as output:
+        pickle.dump(obj, output, pickle.HIGHEST_PROTOCOL)
+
+def load_object(filename):
+    with open(filename, 'rb') as input:
+        return pickle.load(input)
+
+def generate_matrix():
+    document_term = CountVectorizer()
+    # Salvando em arquivo
+    matrix_document_term = document_term.fit_transform(text_trans)
+    save_object(document_term.get_feature_names(), 'terms_npl.dt')
+    matrix_dt = np.matrix(matrix_document_term.toarray())
+    save_object(matrix_dt, 'matrix_npl.dt')
+    matrix_tt = np.dot(np.transpose(matrix_dt), matrix_dt)
+    save_object(matrix_tt, 'matrix_npl.tt')
+    pass
+
+#----------------------------------------------------------------------------------------------------------------------------#
+# Função de recuperação, recupera os documentos que contenham determinado termo
+# A entrada da função são termos e varre a matriz termo-documento para identificar quais documentos contem o termo em questão
+def retrieval(terms, matrix_dt):
+    result_docs = []
+    for term in terms:
+        sum_vector = np.sum(matrix_dt[:,term]) # Quantos documentos para cada termo
+        norm = dict()
+        for i in (np.where(matrix_dt[:,term]>pc1)[0]+1).tolist():   # documentos do termo
+            norm[i] = float(matrix_dt[i-1, term])/float(sum_vector) # frequencia do termos no documento
+        norm_sort = sorted(norm.items(), key=operator.itemgetter(1),reverse=True)[:pc3] # os pc3 primeiros (documentos)
+        sum_norm_sort = 0
+        for i in norm_sort:
+            sum_norm_sort = sum_norm_sort + i[1]
+            result_docs.append(i[0])
+            if sum_norm_sort >= pc2: # Relevancia (1 - Todos, 0.5 os 50% mais importantes)
+                break
+            pass
+    return set(result_docs)
+
+#-----------------------------------------------------------------------------------------------#
+# Função que tokeniza, retira stopwords (english) e faz o stemmer (Com dicionários de sinônimos)
+def tokenize_stopwords_stemmer(text, stemmer, query):
+    no_punctuation = text.translate(None, string.punctuation)
+    tokens = nltk.word_tokenize(no_punctuation)
+    text_filter = [w for w in tokens if not w in stopwords.words('english')]
+    text_final = ''
+    if query == True: # Se for query
+        for k in range(0, len(text_filter)):
+            for i in wn.synsets(text_filter[k]): # Uso do WordNet
+                for s in i.lemma_names():
+                    text_filter.append(s)
+
+    for k in range(0, len(text_filter)):
+        text_final +=str(stemmer.stem(text_filter[k]))
+        if k != len(text_filter)-1:
+            text_final+=" "
+            pass
+    return text_final
+
+# Função que tokeniza, retira stopwords (english) e faz o stemmer
+def tokenize_stopwords_stemmer1(text, stemmer):
+    no_punctuation = text.translate(None, string.punctuation)
+    tokens = nltk.word_tokenize(no_punctuation)
+    text_filter = [w for w in tokens if not w in stopwords.words('english')]
+    text_final = ''
+    for k in range(0, len(text_filter)):
+        text_final +=str(stemmer.stem(text_filter[k]))
+        if k != len(text_filter)-1:
+            text_final+=" "
+            pass
+    return text_final
 
 #---------------------------------------------------------------------------------------#
-# Ranqueamento (BM25)
+# Função de Consulta normal, pesquisa os termos da consulta na matrix co-ocorrencia
+def search (query, terms_dt, matrix_tt):
+    termss = []
+    for i in query:
+        if i in terms_dt:
+            key = terms_dt.index(i)
+            termsO = np.matrix(matrix_tt[key,key])
+            for j in termsO.tolist()[0]:
+                termss.append(matrix_tt[key, :].tolist()[0].index(j))
+            pass
+        pass
+    pass
+    return termss
+
+# Função de Consulta expandida, pesquisa os termos da consulta na matrix de co-ocorrencia
+# Pega os "N expansion" mais relevantes documentos de cada termo da consulta
+def search_expanded(query, terms_dt, matrix_tt):
+    terms = []
+    for i in query:
+        if i in terms_dt:
+            key = terms_dt.index(i) # Pega a posicao que o termo se encontra
+            terms_recommended = np.sort(matrix_tt[key])[:, len(matrix_tt)-expansion:len(matrix_tt)] # Final da Linha os 5 ultimos colunas (maiores)
+            for j in terms_recommended.tolist()[0]:
+                terms
+                terms.append(matrix_tt[key, :].tolist()[0].index(j)) # Retorna o indice da frequencia j
+            pass
+            if key in terms == False or expansion == 0:
+                terms.append(key)
+        pass
+    pass
+    return set(terms)
+
+#----------------------------------------------------------------------------------#
+# Função de Ranqueamento (BM25)
+# A função precisa ser melhorada, esta com baixo desempenho e em fase de validações
+
+# Calcula a média de documentos da coleção
 def avg_documents(matrix_dt):
     soma = 0
     for i in range(0, len(matrix_dt)):
         soma += np.sum(matrix_dt[i, :])
     return float(soma)/float(len(matrix_dt))
 
+# Função de ranqueamento
 def ranqueamento(matrix_dt, terms_dt, documents_retrieval, query, avg):
         qs = QuerySearch(matrix_dt, avg)
         query_result = dict()
@@ -214,6 +236,7 @@ def ranqueamento(matrix_dt, terms_dt, documents_retrieval, query, avg):
         query_result = dict(sorted(query_result.items(), key=operator.itemgetter(1),reverse=True)).keys()[0:int(len(documents_retrieval)*0.3)]
         return query_result
 
+# Classe de funções auxiliares para o ranqueamento
 class QuerySearch(object):
     def __init__(self,matrix, avg):
         self.k = 2.0
@@ -239,9 +262,12 @@ class QuerySearch(object):
         return len(np.where(self.matrix[docid,qid]>0)[0])
 
 #---------------------------------------------------------------------------------------#
-def main():
-    t0 = time()
+# Função principal
 
+def main():
+    t0 = time() # Calcular o tempo de execução
+
+    # Declaração de variáveis locais
     amount_documents = len(matrix_dt)
     mean_precision   = 0
     mean_recall      = 0
@@ -260,37 +286,41 @@ def main():
     mean_acuracy4    = 0
 
     print "############################################"
+    # Para cada uma das consultas...
     for i in xrange(0,len(querys)-1):
-        query_token2         = tokenize_stopwords_stemmer1(querys[i], stemmer)
-        query_token          = tokenize_stopwords_stemmer(querys[i], stemmer, True) # Sinonimos
-        query                = querys[i] # Original
+
+        # Tokeniza, retira as stopwords e faz o stemmer (opções de com ou sem sinônimos)       		
+        query_token2         = tokenize_stopwords_stemmer1(querys[i], stemmer)      # Sem sinônimos
+        query_token          = tokenize_stopwords_stemmer(querys[i], stemmer, True) # Com sinônimos
 
         #############
         # retrieval #
         #############
-        # terms_dt
+        # Retorna os termos da query aplicando as funções search ou search_expanded e ainda podendo variar com ou sem sinônimos (fiz dessa forma pra comparar mais resultados em uma execução)
         terms                = search         (set(query_token2.split(' ')), terms_dt, matrix_tt)  # Sem expansao
         terms1               = search_expanded(set(query_token2.split(' ')), terms_dt, matrix_tt)  # Com expansao
         terms2               = search         (set(query_token.split(' ')) , terms_dt, matrix_tt)  # Sem expansao + Sinonimos
         terms3               = search_expanded(set(query_token.split(' ')) , terms_dt, matrix_tt)  # Com expansao + Sinonimos
         terms4               = search_expanded(set(query_token.split(' ')) , terms_dt, matrix_tt)  # Com expansao + Sinonimos (para BM25)
 
-        # Sem expansao
+        #---------------------------------------------------------------------------------------------
+        # A seguir são criado 5 modelos (fiz dessa forma pra comparar mais resultados em uma execução)
+        # Modelo 1 - Recupera os documentos sem utilizar expansão de termos (sem expansão)
         documents_retrieval  = retrieval(terms, matrix_dt)
         documents_relevants  = relevants_documents()[i+1]
-        TP                   = len(documents_retrieval.intersection(documents_relevants))
-        FP                   = len(documents_retrieval) - TP
-        FN                   = len(documents_relevants) - TP
-        TN                   = len(matrix_dt) - len(documents_retrieval)
+        TP                   = len(documents_retrieval.intersection(documents_relevants)) # Verdadeiro Positivo
+        FP                   = len(documents_retrieval) - TP                              # Falso Positivo
+        FN                   = len(documents_relevants) - TP                              # Falso Negativo
+        TN                   = len(matrix_dt) - len(documents_retrieval)                  # Verdadeiro Negativo
         SOMA                 = TP+FP+FN+TN
         Acuracia2            = float(len(documents_retrieval.intersection(documents_relevants)) + amount_documents - len(documents_retrieval))/float(amount_documents)
         doc_rel_rec          = sorted(list(documents_retrieval.intersection(documents_relevants)))
 
-        mean_precision       = mean_precision + (float(TP)/float(TP+FP))
-        mean_recall          = mean_recall    + (float(TP)/float(TP+FN))
-        mean_acuracy         = mean_acuracy   + (float(TP+TN)/float(TP+TN+FP+FN))
+        mean_precision       = mean_precision + (float(TP)/float(TP+FP))          # Calculo da precisão da consulta
+        mean_recall          = mean_recall    + (float(TP)/float(TP+FN))          # Calculo da cobertura da consulta
+        mean_acuracy         = mean_acuracy   + (float(TP+TN)/float(TP+TN+FP+FN)) # Calculo da acuracia da consulta
 
-        # Com expansao
+        # Modelo 2 - Recupera os documentos utilizando expansão de termos (com expansão)
         documents_retrieval1 = retrieval(terms1, matrix_dt)
         documents_relevants1 = relevants_documents()[i+1]
         TP1                  = len(documents_retrieval1.intersection(documents_relevants1))
@@ -305,7 +335,7 @@ def main():
         mean_recall1    = mean_recall1    + (float(TP1)/float(TP1+FN1))
         mean_acuracy1   = mean_acuracy1   + (float(TP1+TN1)/float(TP1+TN1+FP1+FN1))
 
-        # Sem expansao + Sinonimos
+        # Modelo 3 - Recupera os documentos sem utilizar expansão de termos (Sem expansão e com Sinônimos)
         documents_retrieval2  = retrieval(terms2, matrix_dt)
         documents_relevants2  = relevants_documents()[i+1]
         TP2                   = len(documents_retrieval2.intersection(documents_relevants2))
@@ -320,7 +350,7 @@ def main():
         mean_recall2    = mean_recall2    + (float(TP2)/float(TP2+FN2))
         mean_acuracy2   = mean_acuracy2   + (float(TP2+TN2)/float(TP2+TN2+FP2+FN2))
 
-        # Com expansao + Sinonimos
+        # Modelo 4 - Recupera os documentos utilizando expansão de termos (Com expansão e com Sinônimos)
         documents_retrieval3 = retrieval(terms3, matrix_dt)
         documents_relevants3 = relevants_documents()[i+1]
         TP3                  = len(documents_retrieval3.intersection(documents_relevants3))
@@ -335,7 +365,7 @@ def main():
         mean_recall3    = mean_recall3    + (float(TP3)/float(TP3+FN3))
         mean_acuracy3   = mean_acuracy3   + (float(TP3+TN3)/float(TP3+TN3+FP3+FN3))
 
-        # Com expansao + Sinonimos + BM25
+        # Modelo 5 - Recupera os documentos utilizando expansão de termos (Com expansão, com Sinônimos e aplicando BM25)
         documents_retrieval4   = retrieval(terms4, matrix_dt)
         documents_retrieval4   = set(ranqueamento(matrix_dt, terms_dt, documents_retrieval4, query_token.split(' '), avg))
         documents_relevants4   = relevants_documents()[a+1]
@@ -346,28 +376,38 @@ def main():
         SOMA4                  = TP4+FP4+FN4+TN4
         Acuracia24             = float(len(documents_retrieval4.intersection(documents_relevants4)) + amount_documents - len(documents_retrieval4))/float(amount_documents)
         doc_rel_rec4           = sorted(list(documents_retrieval4.intersection(documents_relevants4)))
-
+ 
         mean_precision4 = mean_precision4 + (float(TP4)/float(TP4+FP4))
         mean_recall4    = mean_recall4    + (float(TP4)/float(TP4+FN4))
         mean_acuracy4   = mean_acuracy4   + (float(TP4+TN4)/float(TP4+TN4+FP4+FN4))
 
-        #Gráfico
+        # Gráfico (montando informações para geração dos gráficos)
+        # Precisão (Precision)
         grPrecision.append(float(TP)/float(TP+FP))
         grPrecision1.append(float(TP1)/float(TP1+FP1))
         grPrecision2.append(float(TP2)/float(TP2+FP2))
         grPrecision3.append(float(TP3)/float(TP3+FP3))
-        grPrecision4.append(float(TP4)/float(TP4+FP4))	
+        grPrecision4.append(float(TP4)/float(TP4+FP4))
 
+        # Cobertura (Recall)
         grRecall.append(float(TP)/float(TP+FN))
         grRecall1.append(float(TP1)/float(TP1+FN1))
         grRecall2.append(float(TP2)/float(TP2+FN2))
         grRecall3.append(float(TP3)/float(TP3+FN3))
         grRecall4.append(float(TP4)/float(TP4+FN4))
 
+        # Mostrando status de cada modelo na tela (por consulta - 93)
         print "Query....: " + str(i+1) + " - Sem Expansao"
         print "------------------------------------------"
         print "Qtd.Documentos Relevantes................: " + str(len(documents_relevants))
         print "Qtd.Documentos Recuperados...............: " + str(len(documents_retrieval)) + " (" + str(TP) + ")"
+        print "Documentos Relevantes....................: " + str(documents_relevants)
+        print "Documentos Recuperados e Relevantes......: " + str(doc_rel_rec)
+        print "Documentos Relevantes e NÃO Recuperados..: " + str(sorted(list(set(documents_relevants).difference(set(doc_rel_rec)))))
+        print "Matriz de Confusao ( Somatorio: " + str(SOMA) + " )"
+        print "TP: " + str(TP) + " | FP: " + str(FP)
+        print "FN: " + str(FN) + " | TN: " + str(TN)
+        print ""
         print "Precision: " + str(float(TP)/float(TP+FP))
         print "Recall...: " + str(float(TP)/float(TP+FN))
         print "Acuracia.: " + str(float(TP+TN)/float(TP+TN+FP+FN))
@@ -376,6 +416,13 @@ def main():
         print "----------------------------------------------"		
         print "Qtd.Documentos Relevantes................: " + str(len(documents_relevants1))
         print "Qtd.Documentos Recuperados...............: " + str(len(documents_retrieval1)) + " (" + str(TP1) + ")"
+        print "Documentos Relevantes....................: " + str(documents_relevants1)
+        print "Documentos Recuperados e Relevantes......: " + str(doc_rel_rec1)
+        print "Documentos Relevantes e NÃO Recuperados..: " + str(sorted(list(set(documents_relevants1).difference(set(doc_rel_rec1)))))
+        print "Matriz de Confusao ( Somatorio: " + str(SOMA1) + " )"
+        print "TP: " + str(TP1) + " | FP: " + str(FP1)
+        print "FN: " + str(FN1) + " | TN: " + str(TN1)
+        print ""
         print "Precision: " + str(float(TP1)/float(TP1+FP1))
         print "Recall...: " + str(float(TP1)/float(TP1+FN1))
         print "Acuracia.: " + str(float(TP1+TN1)/float(TP1+TN1+FP1+FN1))
@@ -384,6 +431,13 @@ def main():
         print "------------------------------------------------------"
         print "Qtd.Documentos Relevantes................: " + str(len(documents_relevants2))
         print "Qtd.Documentos Recuperados...............: " + str(len(documents_retrieval2)) + " (" + str(TP2) + ")"
+        print "Documentos Relevantes....................: " + str(documents_relevants2)
+        print "Documentos Recuperados e Relevantes......: " + str(doc_rel_rec2)
+        print "Documentos Relevantes e NÃO Recuperados..: " + str(sorted(list(set(documents_relevants2).difference(set(doc_rel_rec2)))))
+        print "Matriz de Confusao ( Somatorio: " + str(SOMA2) + " )"
+        print "TP: " + str(TP2) + " | FP: " + str(FP2)
+        print "FN: " + str(FN2) + " | TN: " + str(TN2)
+        print ""
         print "Precision: " + str(float(TP2)/float(TP2+FP2))
         print "Recall...: " + str(float(TP2)/float(TP2+FN2))
         print "Acuracia.: " + str(float(TP2+TN2)/float(TP2+TN2+FP2+FN2))
@@ -392,14 +446,28 @@ def main():
         print "----------------------------------------------------------"
         print "Qtd.Documentos Relevantes................: " + str(len(documents_relevants3))
         print "Qtd.Documentos Recuperados...............: " + str(len(documents_retrieval3)) + " (" + str(TP3) + ")"
+        print "Documentos Relevantes....................: " + str(documents_relevants3)
+        print "Documentos Recuperados e Relevantes......: " + str(doc_rel_rec3)
+        print "Documentos Relevantes e NÃO Recuperados..: " + str(sorted(list(set(documents_relevants3).difference(set(doc_rel_rec3)))))
+        print "Matriz de Confusao ( Somatorio: " + str(SOMA3) + " )"
+        print "TP: " + str(TP3) + " | FP: " + str(FP3)
+        print "FN: " + str(FN3) + " | TN: " + str(TN3)
+        print ""
         print "Precision: " + str(float(TP3)/float(TP3+FP3))
         print "Recall...: " + str(float(TP3)/float(TP3+FN3))
         print "Acuracia.: " + str(float(TP3+TN3)/float(TP3+TN3+FP3+FN3))
-        print "------------------------------------------------------"
+        print "------------------------------------------------------------------"
         print "Query....: " + str(i+1) + " - Com Expansao + Sinonimos usando BM25"
-        print "------------------------------------------------------"
+        print "------------------------------------------------------------------"
         print "Qtd.Documentos Relevantes................: " + str(len(documents_relevants4))
         print "Qtd.Documentos Recuperados...............: " + str(len(documents_retrieval4)) + " (" + str(TP4) + ")"
+        print "Documentos Relevantes....................: " + str(documents_relevants4)
+        print "Documentos Recuperados e Relevantes......: " + str(doc_rel_rec4)
+        print "Documentos Relevantes e NÃO Recuperados..: " + str(sorted(list(set(documents_relevants4).difference(set(doc_rel_rec4)))))
+        print "Matriz de Confusao ( Somatorio: " + str(SOMA4) + " )"
+        print "TP: " + str(TP4) + " | FP: " + str(FP4)
+        print "FN: " + str(FN4) + " | TN: " + str(TN4)
+        print ""
         print "Precision: " + str(float(TP4)/float(TP4+FP4))
         print "Recall...: " + str(float(TP4)/float(TP4+FN4))
         print "Acuracia.: " + str(float(TP4+TN4)/float(TP4+TN4+FP4+FN4))
@@ -407,6 +475,8 @@ def main():
         print ""
         pass
     pass
+
+    # Mostrando status de cada modelo na tela (por consulta - 93)
     print "*******************************"
     print "Modelo 1 - Sem expansão"
     print "*******************************"
@@ -442,25 +512,33 @@ def main():
     print "Cobertura.: " + str(round((mean_recall4/len(querys)*100),2)) + "%"
     print "Acurácia..: " + str(round((mean_acuracy4/len(querys)*100),2)) + "%"
     print "*******************************************"
-    print("done in %fs" % (time() - t0))
+    print("done in %fs" % (time() - t0)) # Mostra o tempo de execução do main()
 
 ############
 # Executar #
 ############
-organizes_documents() # Apenas a primeira vez para gerar os objetos (demorada: +- 8hs)
-organizes_querys()
+# Apenas a primeira vez para gerar os objetos (demorada: +- 8hs)
+# organizes_documents()  # Carregar o arquivo de documentos e objeto das matrizes
+organizes_querys()     # Carregar o arquivo de consulta (Query)
+
+# Carregar as matrizes em variáveis
 matrix_dt           = load_object('objects/matrix_npl.dt')
 matrix_tt           = load_object('objects/matrix_npl.tt')
 terms_dt            = load_object('objects/terms_npl.dt')
+
+# Media de documentos para ser utilizado pelo BM25
 avg = avg_documents(matrix_dt)
 
+# Execução (mostra resultados e etc)
 main()
 
+# Geração do gráfico (Será aberto em uma nova janela)
 pl.clf()
 pl.plot(np.sort(grRecall), np.sort(grPrecision)  , label='Sem expansao')
 pl.plot(np.sort(grRecall1), np.sort(grPrecision1), label='Com expansao')
 pl.plot(np.sort(grRecall2), np.sort(grPrecision2), label='Sem expansao + Sinonimos')
-pl.plot(np.sort(grRecall3), np.sort(grPrecision3), label='Sem expansao + Sinonimos')
+pl.plot(np.sort(grRecall3), np.sort(grPrecision3), label='Com expansao + Sinonimos')
+pl.plot(np.sort(grRecall4), np.sort(grPrecision4), label='Com expansao + Sinonimos + BM25')
 pl.xlabel('Recall')
 pl.ylabel('Precision')
 pl.title('Precision-Recall - Colecao: NPL')
