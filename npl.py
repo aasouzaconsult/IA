@@ -123,26 +123,6 @@ def generate_matrix():
     save_object(matrix_tt, 'matrix_npl.tt')
     pass
 
-#----------------------------------------------------------------------------------------------------------------------------#
-# Função de recuperação, recupera os documentos que contenham determinado termo
-# A entrada da função são termos e varre a matriz termo-documento para identificar quais documentos contem o termo em questão
-def retrieval(terms, matrix_dt):
-    result_docs = []
-    for term in terms:
-        sum_vector = np.sum(matrix_dt[:,term]) # Quantos documentos para cada termo
-        norm = dict()
-        for i in (np.where(matrix_dt[:,term]>pc1)[0]+1).tolist():   # documentos do termo
-            norm[i] = float(matrix_dt[i-1, term])/float(sum_vector) # frequencia do termos no documento
-        norm_sort = sorted(norm.items(), key=operator.itemgetter(1),reverse=True)[:pc3] # os pc3 primeiros (documentos)
-        sum_norm_sort = 0
-        for i in norm_sort:
-            sum_norm_sort = sum_norm_sort + i[1]
-            result_docs.append(i[0])
-            if sum_norm_sort >= pc2: # Relevancia (1 - Todos, 0.5 os 50% mais importantes)
-                break
-            pass
-    return set(result_docs)
-
 #-----------------------------------------------------------------------------------------------#
 # Função que tokeniza, retira stopwords (english) e faz o stemmer (Com dicionários de sinônimos)
 def tokenize_stopwords_stemmer(text, stemmer, query):
@@ -176,8 +156,9 @@ def tokenize_stopwords_stemmer1(text, stemmer):
             pass
     return text_final
 
-#---------------------------------------------------------------------------------------#
+#----------------------------------------------------------------------------------#
 # Função de Consulta normal, pesquisa os termos da consulta na matrix co-ocorrencia
+# Em proximas versões essa função será substituida pela função: search_expanded
 def search (query, terms_dt, matrix_tt):
     termss = []
     for i in query:
@@ -203,11 +184,31 @@ def search_expanded(query, terms_dt, matrix_tt):
                 terms
                 terms.append(matrix_tt[key, :].tolist()[0].index(j)) # Retorna o indice da frequencia j
             pass
-            if key in terms == False or expansion == 0:
+            if key in terms == False or expansion == 0: # Se o expansion for 0, ele terá o mesmo sentido da função: search
                 terms.append(key)
         pass
     pass
-    return set(terms)
+    return set(terms) # Retorna os termos expandidos
+
+#----------------------------------------------------------------------------------------------------------------------------#
+# Função de recuperação, recupera os documentos que contenham determinado termo
+# A entrada da função são termos e varre a matriz termo-documento para identificar quais documentos contem o termo em questão
+def retrieval(terms, matrix_dt):
+    result_docs = []
+    for term in terms:
+        sum_vector = np.sum(matrix_dt[:,term]) # Quantos documentos para cada termo
+        norm = dict()
+        for i in (np.where(matrix_dt[:,term]>pc1)[0]+1).tolist():   # documentos do termo
+            norm[i] = float(matrix_dt[i-1, term])/float(sum_vector) # frequencia do termos no documento
+        norm_sort = sorted(norm.items(), key=operator.itemgetter(1),reverse=True)[:pc3] # os pc3 primeiros (documentos)
+        sum_norm_sort = 0
+        for i in norm_sort:
+            sum_norm_sort = sum_norm_sort + i[1]
+            result_docs.append(i[0])
+            if sum_norm_sort >= pc2: # Relevancia (1 - Todos, 0.5 os 50% mais importantes)
+                break
+            pass
+    return set(result_docs)  # Retorna todos os documentos que contenha os termos da consulta
 
 #----------------------------------------------------------------------------------#
 # Função de Ranqueamento (BM25)
@@ -238,13 +239,13 @@ def ranqueamento(matrix_dt, terms_dt, documents_retrieval, query, avg):
 
 # Classe de funções auxiliares para o ranqueamento
 class QuerySearch(object):
-    def __init__(self,matrix, avg):
-        self.k = 2.0
+    def __init__(self,matrix, avg): # Parametros
+        self.k = 2.0        
         self.b = 0.75
         self.matrix = matrix
         self.avg = avg
 
-    def BM25(self,docid,qid):
+    def BM25(self,docid,qid): # Algoritmo do BM25 (Melhorar performance)
         df = self.calc_df(qid)
         tf = self.calc_tf(docid,qid)
         dsize = np.sum(self.matrix[docid,:])
