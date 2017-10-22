@@ -7,7 +7,6 @@
 # 84 - Documentos - Query 41
 # Termos - 7878
 # https://github.com/aasouzaconsult/IA
-# https://github.com/jaaomarcos/ir-medline #(João Marcos)
 
 # http://la-cci.org/
 
