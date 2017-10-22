@@ -116,3 +116,4 @@ shortest_path(graph, 'A', 'F') # ['A', 'C', 'F']
 
 # Links
 # http://eddmann.com/posts/depth-first-search-and-breadth-first-search-in-python/
+# http://prorum.com/index.php/2414/implementar-extrair-informacoes-conectividade-aciclicidade
