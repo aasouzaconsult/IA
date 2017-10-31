@@ -1,3 +1,4 @@
+# http://www.nltk.org/book/ch05.html
 # http://www.nltk.org/book/ch07.html
 
 locs = [( 'Omnicom' , 'IN' , 'New York' ),
