@@ -48,7 +48,7 @@ text = word_tokenize("And now for something completely different")
 text = word_tokenize("the little yellow dog barked at the cat")
 sentence = nltk.pos_tag(text)
 
-grammar = "NP: {<DT>?<JJ>*<NN>}
+grammar = "NP: {<DT>?<JJ>*<NN>}"
 cp = nltk.RegexpParser(grammar)
 result = cp.parse(sentence)
 result.draw()
