@@ -51,6 +51,15 @@ sentence = nltk.pos_tag(text)
 
 grammar = "NP: {<DT>?<JJ>*<NN>}" # dog e cat
 
+# http://blog.quibb.org/2010/01/nltk-regular-expression-parser-regexpparser/
+grammar = """
+	NP:   {<PRP>?<JJ.*>*<NN.*>+}
+	CP:   {<JJR|JJS>}
+	VERB: {<VB.*>}
+	THAN: {<IN>}
+	COMP: {<DT>?<NP><RB>?<VERB><DT>?<CP><THAN><DT>?<NP>}
+	"""
+
 cp = nltk.RegexpParser(grammar)
 result = cp.parse(sentence)
 result.draw()
