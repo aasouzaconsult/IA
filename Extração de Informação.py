@@ -44,11 +44,12 @@ result.draw()
 
 import nltk
 from nltk import word_tokenize
-text = word_tokenize("And now for something completely different")
 text = word_tokenize("the little yellow dog barked at the cat")
+text = word_tokenize("I wonder how many atheists out there care to speculateon the face of the world.")
 sentence = nltk.pos_tag(text)
 
-grammar = "NP: {<DT>?<JJ>*<NN>}"
+grammar = "NP: {<DT>?<JJ>*<NN>}" # dog e cat
+
 cp = nltk.RegexpParser(grammar)
 result = cp.parse(sentence)
 result.draw()
