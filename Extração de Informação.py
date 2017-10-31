@@ -24,7 +24,9 @@ for tree in trees:
    print(tree)
 
 ################################################################## 
-# Chunking (grafico)
+# Chunking (grafo)
+# the little yellow dog barked at the cat
+# o pequeno cão amarelo latiu no gato
 
 sentence = [("the", "DT"), ("little", "JJ"), ("yellow", "JJ"),
 ("dog", "NN"), ("barked", "VBD"), ("at", "IN"),  ("the", "DT"), ("cat", "NN")] 
