@@ -1,5 +1,6 @@
 # http://www.nltk.org/book/ch05.html
 # http://www.nltk.org/book/ch07.html
+# http://scikit-learn.org/stable/modules/biclustering.html
 
 locs = [( 'Omnicom' , 'IN' , 'New York' ),
         ( 'DDB Needham' , 'IN' , 'New York' ),
