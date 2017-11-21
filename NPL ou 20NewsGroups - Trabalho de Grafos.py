@@ -1,11 +1,10 @@
-######################################################
-###### Base: NPL - National Physical Laboratory ######
-######################################################
-# 11429 - Documentos
-# 93 - Querys
-# 13 - Termos - Query 81
-# 84 - Documentos - Query 41
-# Termos - 7878
+# Base: NPL - National Physical Laboratory ######
+# 11429 - Documentos | 93 - Querys | 13 - Termos - Query 81 | 84 - Documentos - Query 41 | Termos - 7878
+
+# Auxiliares
+# http://www.nltk.org/book/ch07.html
+# http://nishutayaltech.blogspot.com.br/2015/02/penn-treebank-pos-tags-in-natural.html
+# http://www.cs.cornell.edu/courses/cs474/2004fa/lec1.pdf (tipos)
 
 import nltk
 import string
@@ -28,7 +27,8 @@ graf_trans = []
 stemmer    = PorterStemmer()
 
 # Gramática
-grammar = "NP: {<DT>?<JJ>*<NN>}" # Exemplo - tem que ser criada uma específica
+# grammar = "NP: {<DT>?<JJ>*<NN>}" # Exemplo - tem que ser criada uma específica
+grammar = "NP: {<JJ>?<NP>?<VBG>*<NN>}" # Exemplo - tem que ser criada uma específica
 
 def tokenize_stopwords_stemmer(text, stemmer, query):
     no_punctuation = text.translate(None, string.punctuation)
