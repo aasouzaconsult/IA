@@ -24,7 +24,11 @@ from sklearn.feature_extraction.text import CountVectorizer
 from time import time
 
 text_trans = []
+graf_trans = []
 stemmer    = PorterStemmer()
+
+# Gramática
+grammar = "NP: {<DT>?<JJ>*<NN>}" # Exemplo - tem que ser criada uma específica
 
 def tokenize_stopwords_stemmer(text, stemmer, query):
     no_punctuation = text.translate(None, string.punctuation)
@@ -75,9 +79,10 @@ def organizes_documents():
     generate_matrix()
 
 # Executando
+# Sem radicalização (stemmer)
 organizes_documents()
 
-# Carregar as matrizes em variáveis
+# Carregar as matrizes em variáveis (Não utilizado por enquanto)
 matrix_dt           = load_object('objects/matrix_npl.dt')
 matrix_tt           = load_object('objects/matrix_npl.tt')
 terms_dt            = load_object('objects/terms_npl.dt')
@@ -86,15 +91,20 @@ terms_dt            = load_object('objects/terms_npl.dt')
 text_trans
 text_trans[1]
 
-# Alguns testes
-text = word_tokenize(text_trans[1])
+# Grafo de Dependência (Teste)
+text     = word_tokenize(text_trans[1])
 sentence = nltk.pos_tag(text)
-
-grammar = "NP: {<DT>?<JJ>*<NN>}" # Exemplo - tem que ser criada uma específica
-
-cp = nltk.RegexpParser(grammar)
-result = cp.parse(sentence)
+cp       = nltk.RegexpParser(grammar)
+result   = cp.parse(sentence)
 result.draw()
+
+# Todos
+for i in range(0, len(text_trans)):
+    graf     = word_tokenize(text_trans[i])
+    sentence = nltk.pos_tag(graf)
+    cp       = nltk.RegexpParser(grammar)
+    result   = cp.parse(sentence)
+    graf_trans.append(result)
 
 
 '''
