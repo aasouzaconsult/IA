@@ -38,7 +38,8 @@ def tokenize_stopwords_stemmer(text, stemmer, query):
                     text_filter.append(s)
 
     for k in range(0, len(text_filter)):
-        text_final +=str(stemmer.stem(text_filter[k]))
+       #text_final +=str(stemmer.stem(text_filter[k]))
+        text_final += str(text_filter[k])
         if k != len(text_filter)-1:
             text_final+=" "
             pass
@@ -82,9 +83,18 @@ matrix_tt           = load_object('objects/matrix_npl.tt')
 terms_dt            = load_object('objects/terms_npl.dt')
 
 # Visualizando os dados
-text_trans[0]
+text_trans
 text_trans[1]
 
+# Alguns testes
+text = word_tokenize(text_trans[1])
+sentence = nltk.pos_tag(text)
+
+grammar = "NP: {<DT>?<JJ>*<NN>}" # Exemplo - tem que ser criada uma específica
+
+cp = nltk.RegexpParser(grammar)
+result = cp.parse(sentence)
+result.draw()
 
 
 '''
