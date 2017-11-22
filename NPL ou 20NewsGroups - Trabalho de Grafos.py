@@ -5,6 +5,8 @@
 # http://www.nltk.org/book/ch07.html
 # http://nishutayaltech.blogspot.com.br/2015/02/penn-treebank-pos-tags-in-natural.html
 # http://www.cs.cornell.edu/courses/cs474/2004fa/lec1.pdf (tipos)
+# https://stackoverflow.com/questions/15388831/what-are-all-possible-pos-tags-of-nltk
+# https://www.clips.uantwerpen.be/pages/pattern-en
 
 import nltk
 import string
@@ -27,9 +29,23 @@ graf_trans = []
 stemmer    = PorterStemmer()
 
 # Gramática
-# grammar = "NP: {<DT>?<JJ>*<NN>}" # Exemplo - tem que ser criada uma específica
-grammar = "NP: {<JJ>?<NP>?<VBG>*<NN>}" # Exemplo - tem que ser criada uma específica
+# grammar = "NP: {<JJ>?<NP>?<VBG>*<NN>}" # Exemplo
+# Creio que essa gramática abaixo seja boa
+grammar = """
+	NP:   {<PRP>?<JJ.*>*<NN.*>+}
+	CP:   {<JJR|JJS>}
+	VERB: {<VB.*>}
+	THAN: {<IN>}
+	COMP: {<DT>?<NP><RB>?<VERB><DT>?<CP><THAN><DT>?<NP>}
+	"""
 
+# NP - noun phrase ( their public lectures)
+# PRP - pronoun (they)
+# JJ - adjective (public)
+# NN - singular noun (pyramid)
+# VB - base (He may like/VB cookies)
+# IN - preposition (in)
+	
 def tokenize_stopwords_stemmer(text, stemmer, query):
     no_punctuation = text.translate(None, string.punctuation)
     tokens = nltk.word_tokenize(no_punctuation)
@@ -143,13 +159,10 @@ print(newsgroups_train.target_names[newsgroups_train.target[1]])
 
 # Tratando o texto
 
-
 # Alguns testes
 text = word_tokenize("I wonder how many atheists out there care to speculateon the face of the world.")
 sentence = nltk.pos_tag(text)
-
 grammar = "NP: {<DT>?<JJ>*<NN>}" # Exemplo - tem que ser criada uma específica
-
 cp = nltk.RegexpParser(grammar)
 result = cp.parse(sentence)
 result.draw()
