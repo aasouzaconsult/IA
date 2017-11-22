@@ -7,6 +7,7 @@
 # http://www.cs.cornell.edu/courses/cs474/2004fa/lec1.pdf (tipos)
 # https://stackoverflow.com/questions/15388831/what-are-all-possible-pos-tags-of-nltk
 # https://www.clips.uantwerpen.be/pages/pattern-en
+# Natural Language Processing - http://www.ling.helsinki.fi/kit/2008s/clt231/nltk-0.9.5/doc/en/book.html
 
 import nltk
 import string
