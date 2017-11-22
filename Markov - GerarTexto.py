@@ -1,6 +1,7 @@
 # http://2017.compciv.org/guide/topics/python-nonstandard-libraries/twython-guide/twitter-twython-simple-markov-bot.html
+# http://tetration.xyz/Ngram-Tutorial/
 # https://github.com/jsvine/markovify
-# usa o arquivo SherlockHolmes.txt 
+# usa o arquivo SherlockHolmes.txt
 
 import markovify
 
