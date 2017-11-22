@@ -1,5 +1,6 @@
 # http://2017.compciv.org/guide/topics/python-nonstandard-libraries/twython-guide/twitter-twython-simple-markov-bot.html
 # http://tetration.xyz/Ngram-Tutorial/
+# http://theorangeduck.com/page/17-line-markov-chain (Gerar texto)
 # https://github.com/jsvine/markovify
 # usa o arquivo SherlockHolmes.txt
 
