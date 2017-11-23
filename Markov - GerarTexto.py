@@ -5,10 +5,19 @@
 # usa o arquivo SherlockHolmes.txt
 
 import markovify
+import re
+from unicodedata import normalize
 
 # Get raw text as string.
+# with open("bases/Iracema-jose-de-alencar.txt") as f:
 with open("SherlockHolmes.txt") as f:
     text = f.read()
+
+#Remover acentos
+def remover_acentos(txt, codif='latin-1'):   # 'utf-8'
+    return normalize('NFKD', txt.decode(codif)).encode('ASCII', 'ignore'
+        
+text = remover_acentos(text)
 
 # Build the model.
 text_model = markovify.Text(text)
