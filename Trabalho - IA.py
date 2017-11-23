@@ -1,14 +1,23 @@
 import re
 from unicodedata import normalize
 
-def remover_acentos(txt, codif='utf-8'):
+def remover_acentos(txt, codif='latin-1'):
     return normalize('NFKD', txt.decode(codif)).encode('ASCII', 'ignore')
 
-s = "A clusterização de documentos é um problema que consiste em encontrar grupos de documentos, dado um coleção, com características semelhantes. No trabalho, usaremos uma coleção de documentos (20newsgroups), onde cada documento dessa coleção será representado por um grafo de dependência. Será aplicado técnicas de similaridade (como similaridade cosseno, distância ou k-means) para identificar os grafos (documentos) com características semelhantes."
+# Texto Completo
+with open("bases/Iracema-jose-de-alencar.txt") as f:
+	text = f.read()
 
-t = remover_acentos(s)
+text = remover_acentos(text)
 
+# Capitulo I
+with open("bases/Iracema-jose-de-alencar-Cap1.txt") as c1:
+	Cap1 = c1.read()
+
+Cap1 = remover_acentos(Cap1)
+	
 # Remove os espaços em branco
-t = re.sub(r'\s', '', t)
+# Capítulo I
+Cap1SE = re.sub(r'\s', '', Cap1)
 
 # Voltar os espaços
