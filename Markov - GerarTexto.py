@@ -10,8 +10,9 @@ import re
 from unicodedata import normalize
 
 # Get raw text as string.
+# with open("SherlockHolmes.txt") as f:
 # with open("bases/Iracema-jose-de-alencar.txt") as f:
-with open("SherlockHolmes.txt") as f:
+with open("bases/Textos-Jose-De-Alencar.txt") as f:
     text = f.read()
 
 #Remover acentos
@@ -24,11 +25,11 @@ text = remover_acentos(text)
 text_model = markovify.Text(text)
 
 # Print five randomly-generated sentences
-for i in range(5):
+for i in range(10):
     print(text_model.make_sentence())
 
 # Print three randomly-generated sentences of no more than 140 characters
-for i in range(3):
+for i in range(10):
     print(text_model.make_short_sentence(140))
 
 #################	
