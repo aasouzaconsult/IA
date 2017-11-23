@@ -35,11 +35,21 @@ for i in range(10):
 #################	
 # Outro exemplo #
 #################
-corpus = open("SherlockHolmes.txt").read()
+import re
+from sys import stdout
+from random import randint, choice
+from collections import defaultdict
 
-text_model = markovify.Text(corpus, state_size=3)
-model_json = text_model.to_json()
-# In theory, here you'd save the JSON to disk, and then read it back later.
+with open('bases/Textos-Jose-De-Alencar.txt') as f:
+    words = remover_acentos(f)
+    words = re.split(' +', f.read())
 
-reconstituted_model = markovify.Text.from_json(model_json)
-reconstituted_model.make_short_sentence(140)
+transition = defaultdict(list)
+for w0, w1, w2 in zip(words[0:], words[1:], words[2:]):
+    transition[w0, w1].append(w2)
+	
+i = randint(0, len(words)-3)
+w0, w1, w2 = words[i:i+3]
+for _ in range(500):
+    stdout.write(w2+' ')
+    w0, w1, w2 = w1, w2, choice(transition[w1, w2])
