@@ -9,3 +9,9 @@ Pacotes
 - NUMPY
 - PICKLE
 - SKLEARN
+
+# Extras
+Markov - GerarTexto.py
+- SherlockHolmes.txt
+- Textos-Jose-De-Alencar.txt
+- Iracema-jose-de-alencar.txt
