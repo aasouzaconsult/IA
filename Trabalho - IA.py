@@ -10,6 +10,9 @@ with open("bases/Iracema-jose-de-alencar.txt") as f:
 
 text = remover_acentos(text)
 
+# Contar quantidade de espaços
+len(re.findall('\s+', text))
+
 # Capitulo I
 with open("bases/Iracema-jose-de-alencar-Cap1.txt") as c1:
 	Cap1 = c1.read()
