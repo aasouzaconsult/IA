@@ -25,6 +25,17 @@ wordstring += 'it was the age of wisdom it was the age of foolishness'
 allMyWords = wordstring.split()
 print(obo.getNGrams(allMyWords, 3))
 
+# Detalhes
+wordfreq = []
+for w in allMyWords:
+    wordfreq.append(allMyWords.count(w))
+
+print("-> DETALHES <-")
+print("String\n" + wordstring +"\n")
+print("List\n" + str(allMyWords) + "\n")
+print("Frequencies\n" + str(allMyWords) + "\n")
+print("Pairs\n" + str(zip(allMyWords, wordfreq)))
+
 #####################################################
 # Output Data as an HTML File with Python (wrapper) #
 #####################################################
