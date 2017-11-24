@@ -9,3 +9,11 @@
 sent = ['The', 'dog', 'gave', 'John', 'the', 'newspaper']
 n = 3
 [sent[i:i+n] for i in range(len(sent)-n+1)]
+
+# https://programminghistorian.org/lessons/keywords-in-context-using-n-grams
+import obo
+
+wordstring = 'it was the best of times it was the worst of times '
+wordstring += 'it was the age of wisdom it was the age of foolishness'
+allMyWords = wordstring.split()
+print(obo.getNGrams(allMyWords, 3))
