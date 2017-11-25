@@ -1,4 +1,5 @@
 import re
+import obo
 from unicodedata import normalize
 
 def remover_acentos(txt, codif='latin-1'):
