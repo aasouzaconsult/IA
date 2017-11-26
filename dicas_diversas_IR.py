@@ -36,6 +36,14 @@ print("List\n" + str(allMyWords) + "\n")
 print("Frequencies\n" + str(allMyWords) + "\n")
 print("Pairs\n" + str(zip(allMyWords, wordfreq)))
 
+#############################
+# Separa e junta caracteres #
+#############################
+# http://www.pitt.edu/~naraehan/python2/split_join.html
+mary = 'Mary had a little lamb'
+mwords = mary.split() 
+ ' '.join(mwords)
+    
 #####################################################
 # Output Data as an HTML File with Python (wrapper) #
 #####################################################
