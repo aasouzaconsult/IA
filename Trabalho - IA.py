@@ -26,6 +26,7 @@ Cap1SE = re.sub(r'\s', '', Cap1)
 
 # N-Gram (Treinamento?)
 allMyWords = Cap1.split()
+Cap1_nGram = obo.getNGrams(allMyWords, 3) # TriGram
 print(obo.getNGrams(allMyWords, 3))
 
 # Voltar os espaços
