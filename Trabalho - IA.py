@@ -29,4 +29,38 @@ allMyWords = Cap1.split()
 Cap1_nGram = obo.getNGrams(allMyWords, 3) # TriGram
 print(obo.getNGrams(allMyWords, 3))
 
+# Usando Markov
+import random
+class MarkovChain:
+    def __init__(self):
+        self.memory = {}
+    def _learn_key(self, key, value):
+        if key not in self.memory:
+            self.memory[key] = []
+        self.memory[key].append(value)
+    def learn(self, text):
+        tokens = text.split(" ")
+        bigrams = [(tokens[i], tokens[i + 1]) for i in range(0, len(tokens) - 1)]
+        for bigram in bigrams:
+            self._learn_key(bigram[0], bigram[1])
+    def _next(self, current_state):
+        next_possible = self.memory.get(current_state)
+        if not next_possible:
+            next_possible = self.memory.keys()
+        return random.sample(next_possible, 1)[0]
+    def babble(self, amount, state=''):
+        if not amount:
+            return state
+        next_word = self._next(state)
+        return state + ' ' + self.babble(amount - 1, next_word)
+
+# Instanciando Markov
+m = MarkovChain()
+m.learn(Cap1)
+print(m.memory)
+
 # Voltar os espaços
+
+
+# Referências
+# https://sookocheff.com/post/nlp/ngram-modeling-with-markov-chains/
