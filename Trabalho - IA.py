@@ -29,6 +29,13 @@ allMyWords = Cap1.split()
 Cap1_nGram = obo.getNGrams(allMyWords, 3) # TriGram
 print(obo.getNGrams(allMyWords, 3))
 
+# N-Gram por caractere
+def word2ngrams(text, n=1, exact=True):
+  """ Convert text into character ngrams. """
+  return ["".join(j) for j in zip(*[text[i:] for i in range(n)])]
+
+word2ngrams(Cap1)
+
 # Usando Markov
 import random
 class MarkovChain:
