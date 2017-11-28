@@ -1,3 +1,7 @@
+#########################################
+# Exemplo 1 - Word2Vec - GESIM + Google #
+#########################################
+import nltk
 import gensim
 from gensim import utils
 import numpy as np
@@ -9,6 +13,7 @@ from nltk.corpus import stopwords
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 
+# Importando modelo do google
 model = gensim.models.KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin', binary=True)
 
 download('punkt') #tokenizer, run once
@@ -142,9 +147,35 @@ Out[322]:
 <matplotlib.figure.Figure at 0x1884e9400>
 '''
 
-###########################
-# Exemplo Word2Vec - NLTK #
-###########################
+#################################
+# Exemplo 2 - Word2Vec - Google #
+#################################
+#https://www.analyticsvidhya.com/blog/2017/06/word-embeddings-count-word2veec/
+#detalhar tf-idf (exemplo na pagina acima)
+#pip install --trusted-host pypi.python.org gensim
+
+from gensim.models import Word2Vec
+
+#loading the downloaded model
+model = Word2Vec.load_word2vec_format('GoogleNews-vectors-negative300.bin', binary=True, norm_only=True)
+
+#the model is loaded. It can be used to perform all of the tasks mentioned above.
+
+# getting word vectors of a word
+dog = model['dog']
+
+#performing king queen magic
+print(model.most_similar(positive=['woman', 'king'], negative=['man']))
+
+#picking odd one out
+print(model.doesnt_match("breakfast cereal dinner lunch".split()))
+
+#printing similarity index
+print(model.similarity('woman', 'man'))
+
+###############################
+# Exemplo 3 - Word2Vec - NLTK #
+###############################
 # https://streamhacker.com/2014/12/29/word2vec-nltk/
 from gensim.models import Word2Vec
 from nltk.corpus import brown, movie_reviews, treebank
@@ -155,3 +186,4 @@ b.most_similar('money', topn=5)
 # Referências
 # https://github.com/sdimi/average-word2vec/blob/master/avg_word2vec_from_documents.py
 # https://www.kernix.com/blog/similarity-measure-of-textual-documents_p12
+# https://www.analyticsvidhya.com/blog/2017/10/essential-nlp-guide-data-scientists-top-10-nlp-tasks/
