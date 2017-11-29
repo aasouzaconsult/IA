@@ -3,6 +3,41 @@
 #########
 # http://www.ling.helsinki.fi/kit/2008s/clt231/nltk-0.9.5/doc/en/book.html
 
+# Dataset
+txtAlex = "Information Retrieval for retrieval of text automatic", "Study more about information retrieval", "information is to all", "text is very important for all"
+txtAlex
+
+#####################
+# Documento - Termo #
+#####################
+
+from sklearn.feature_extraction.text import CountVectorizer
+txtAlex_vect = CountVectorizer()
+txtAlex_train = txtAlex_vect.fit_transform(txtAlex)
+
+# Visualizando os dados
+txtAlex_train.shape
+txtAlex_train.data
+txtAlex_train[1]
+
+# Vocabulário
+txtAlex_vect.vocabulary_
+
+##########
+# TF-IDF #
+##########
+
+from sklearn.feature_extraction.text import TfidfTransformer
+txtAlex_tfidf = TfidfTransformer()
+# Ver parametros
+txtAlex_tfidf._get_param_names()
+
+txtAlex_train_tfidf = txtAlex_tfidf.fit_transform(txtAlex_train)
+txtAlex_train_tfidf.shape
+txtAlex_train_tfidf.data 
+
+txtAlex_train_tfidf[0].data # ver dados do primeiro "documento"
+
 #####################
 # Janela deslizante #
 #####################
@@ -48,3 +83,8 @@ mwords = mary.split()
 # Output Data as an HTML File with Python (wrapper) #
 #####################################################
 # https://programminghistorian.org/lessons/output-data-as-html-file
+
+#########
+# LINKS #
+#########
+## https://medium.com/@aneesha/topic-modeling-with-scikit-learn-e80d33668730
