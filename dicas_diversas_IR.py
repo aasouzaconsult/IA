@@ -38,6 +38,10 @@ txtAlex_train_tfidf.data
 
 txtAlex_train_tfidf[0].data # ver dados do primeiro "documento"
 
+# Visualizar o Array
+txtAlex_vect.vocabulary_
+txtAlex_train_tfidf.toarray()
+
 #####################
 # Janela deslizante #
 #####################
