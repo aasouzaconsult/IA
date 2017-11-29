@@ -65,9 +65,11 @@ X_train_counts.shape
 X_train_counts.data
 # CountVectorizer supports counts of N-grams of words or consecutive characters. Once fitted, the vectorizer has built
 # a dictionary of feature indices:
-
 count_vect.vocabulary_.get(u'algorithm') # indice da palavras algorithm
 # O valor do índice de uma palavra no vocabulário está ligado à sua frequência em todo o corpus de treinamento.
+
+# ver o vocabulário
+count_vect.vocabulary_
 
 # TF-IDF
 from sklearn.feature_extraction.text import TfidfTransformer
