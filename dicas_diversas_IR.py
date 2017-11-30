@@ -144,4 +144,5 @@ mwords = mary.split()
 #########
 # LINKS #
 #########
-## https://medium.com/@aneesha/topic-modeling-with-scikit-learn-e80d33668730
+# https://medium.com/@aneesha/topic-modeling-with-scikit-learn-e80d33668730
+# http://apprize.info/python/six/5.html
