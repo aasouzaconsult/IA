@@ -45,6 +45,7 @@ txtAlex_train_tfidf.toarray()
 ############
 # Word2Vec #
 ############
+
 from sklearn.decomposition import PCA
 from matplotlib import pyplot
 from gensim.models import Word2Vec
