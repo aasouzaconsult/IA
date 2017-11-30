@@ -6,8 +6,13 @@
 ##########################
 
 from sklearn.datasets import fetch_20newsgroups
+from time import time
+
+print("Loading dataset...")
+t0 = time()
 newsgroups_train = fetch_20newsgroups(subset='train')
 newsgroups_test = fetch_20newsgroups(subset='test')
+print("done in %0.3fs." % (time() - t0))
 
 from pprint import pprint
 pprint(list(newsgroups_train.target_names))
