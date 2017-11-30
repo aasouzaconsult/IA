@@ -65,8 +65,11 @@ words = list(model.wv.vocab)
 print(words)
 # access vector for one word
 print(model['sentence'])
+
 # save model
 model.save('model.bin')
+model.wv.save_word2vec_format('model.txt', binary=False)
+
 # load model
 new_model = Word2Vec.load('model.bin')
 print(new_model)
