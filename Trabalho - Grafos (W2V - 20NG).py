@@ -57,11 +57,7 @@ print(new_model)
 X = model[model.wv.vocab]
 
 # Testando similaridade
-model.similarity('sentence','more')
-model.similarity('more','sentence')
-model.similarity('and','for')
-model.similarity('sentence','this')
-model.most_similar('yet')
+model.similarity('sentence','darrylo')
 
 # fit a 2d PCA model to the vectors
 X = model[model.wv.vocab]
