@@ -97,6 +97,9 @@ pyplot.show()
 
 # https://machinelearningmastery.com/develop-word-embeddings-python-gensim/
 # https://quomodocumque.wordpress.com/2016/01/15/messing-around-with-word2vec/
+# https://rare-technologies.com/word2vec-tutorial/
+# https://radimrehurek.com/gensim/scripts/word2vec_standalone.html
+# https://codesachin.wordpress.com/2015/10/09/generating-a-word2vec-model-from-a-block-of-text-using-gensim-python/
 
 #####################
 # Janela deslizante #
