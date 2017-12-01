@@ -14,17 +14,21 @@
 
 import nltk
 import gensim
-from gensim import utils
+import logging
+import matplotlib.pyplot as plt
 import numpy as np
 import sys
+from gensim import utils
+from gensim.models import Word2Vec
 from sklearn.datasets import fetch_20newsgroups
+from sklearn.decomposition import PCA
 from nltk import word_tokenize
 from nltk import download
 from nltk.corpus import stopwords
-import matplotlib.pyplot as plt
 from matplotlib import pyplot
-from sklearn.decomposition import PCA
-from gensim.models import Word2Vec
+
+# Logar operações
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 download('punkt') #tokenizer, run once
 download('stopwords') #stopwords dictionary, run once
