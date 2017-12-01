@@ -18,6 +18,7 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
+from time import time
 from gensim import utils
 from gensim.models import Word2Vec
 from sklearn.datasets import fetch_20newsgroups
@@ -41,6 +42,10 @@ def preprocess(text):
     doc = [word for word in doc if word.isalpha()] #restricts string to alphabetic characters only
     return doc
 
+print("Loading dataset...")
+t0 = time()
+
+print("Importing collection 20NewsGroups...")
 # Usando o 20 NewsGroups
 ng20 = fetch_20newsgroups(subset='all',
                           remove=('headers', 'footers', 'quotes'))
@@ -48,10 +53,14 @@ ng20 = fetch_20newsgroups(subset='all',
 # text and ground truth labels
 texts, y = ng20.data, ng20.target
 
+print("Preprocessing...")
 sentences = [preprocess(text) for text in texts]
 
+print("Training the model...")
 # Treinando o Modelo
 model = Word2Vec(sentences, min_count=1)
+
+print("done in %0.3fs." % (time() - t0))
 
 # summarize the loaded model
 print(model)
