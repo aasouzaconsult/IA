@@ -48,7 +48,8 @@ sentences = [preprocess(text) for text in texts]
 
 print("Training the model...")
 # Treinando o Modelo
-model = Word2Vec(sentences, min_count=1)
+model = Word2Vec(sentences, min_count=1, size = 278)
+# size = Raiz quadrada do tamanho do vocabulário (uma heurística)
 
 print("done in %0.3fs." % (time() - t0))
 
