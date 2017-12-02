@@ -75,14 +75,14 @@ print(new_model)
 X = model[model.wv.vocab]
 
 # Testando similaridade
-model.similarity('government,'japan)
+model.similarity('government','japan') # 0.40
 model.similarity('rice','japan') # 0.97
-model.similarity('government','economic')
-model.similarity('government','technology')
-model.similarity('government','intelligence')
-model.similarity('technology','intelligence')
-model.similarity('technology','computer')
-model.similarity('hardware','computer')
+model.similarity('government','economic') # 0.78
+model.similarity('government','technology') # 0,63
+model.similarity('government','intelligence') # 0.83
+model.similarity('technology','intelligence') # 0.64
+model.similarity('technology','computer') # 0.89
+model.similarity('hardware','computer') # 0.80
 model.similarity('computer','mouse') # 0.66
 model.similarity('hardware','mouse') # 0.90
 model.similarity('mickey','mouse') # 0.60
