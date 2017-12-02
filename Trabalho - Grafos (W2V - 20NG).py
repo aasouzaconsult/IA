@@ -75,7 +75,18 @@ print(new_model)
 X = model[model.wv.vocab]
 
 # Testando similaridade
-model.similarity('sentence','darrylo')
+model.similarity('government,'japan)
+model.similarity('rice','japan') # 0.97
+model.similarity('government','economic')
+model.similarity('government','technology')
+model.similarity('government','intelligence')
+model.similarity('technology','intelligence')
+model.similarity('technology','computer')
+model.similarity('hardware','computer')
+model.similarity('computer','mouse') # 0.66
+model.similarity('hardware','mouse') # 0.90
+model.similarity('mickey','mouse') # 0.60
+model.similarity('cat','mouse') # 0.70
 
 # fit a 2d PCA model to the vectors
 X = model[model.wv.vocab]
