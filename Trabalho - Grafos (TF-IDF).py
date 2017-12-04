@@ -2,12 +2,14 @@ import numpy as np
 import pickle
 import operator
 import networkx as nx
+import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.datasets import fetch_20newsgroups
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 
 stop_words = stopwords.words('english')
+k = 3
 
 def preprocess(text):
     text = text.lower()
@@ -15,16 +17,24 @@ def preprocess(text):
     doc = [word for word in doc if word not in stop_words]
     doc = [word for word in doc if word.isalpha()]
     return doc
-k = 3
 
 ng20 = fetch_20newsgroups(subset='all',remove=('headers', 'footers', 'quotes'))
-texts, y = ng20.data, ng20.target
-count = len(texts)
+texts = ng20.data
+count = 1000
+
 document_term = TfidfVectorizer()
-matrix_document_term = document_term.fit_transform(texts).toarray()
-
+matrix_document_term = document_term.fit_transform(texts[0:count]).toarray()
 matrix_document_document = np.dot(matrix_document_term, np.transpose(matrix_document_term))
+matrix_adj = np.zeros(shape=matrix_document_document.shape)
 
-print matrix_document_document.shape
-with open('matrix_document_document', 'wb') as output:
-    pickle.dump(matrix_document_document, output, pickle.HIGHEST_PROTOCOL)
+for i in range(len(matrix_document_document)):
+    od = sorted(dict(enumerate(matrix_document_document[i])).items(),key=operator.itemgetter(1),reverse=True)[0:k]
+    for j in od:
+        matrix_adj[i,j[0]] = 1
+
+# with open('matrix_document_document', 'wb') as output:
+#     pickle.dump(matrix_document_document, output, pickle.HIGHEST_PROTOCOL)
+
+G = nx.from_numpy_matrix(matrix_adj)
+nx.draw(G)
+plt.show()
