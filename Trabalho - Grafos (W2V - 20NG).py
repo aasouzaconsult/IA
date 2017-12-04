@@ -43,6 +43,29 @@ ng20 = fetch_20newsgroups(subset='all',
 # text and ground truth labels
 texts, y = ng20.data, ng20.target
 
+######################################################################################
+# Gerando Matrix
+print("Generating Matrix...")
+k = 3
+count = 1#len(texts)
+
+for i in range(count):
+    sentences = [preprocess(texts[i])]
+    model = Word2Vec(sentences, min_count=1)
+    words = list(model.wv.vocab)
+    matrix = dict()
+    for i in words:
+        print model[i]
+        vet = dict()
+        for j in words:
+            vet[j] = np.linalg.norm(model[i] - model[j])
+        matrix[i] = vet
+
+    for i in matrix:
+        print i
+        print sorted(matrix[i].items(), key=operator.itemgetter(1),reverse=False)[1:k]
+######################################################################################
+
 print("Preprocessing...")
 sentences = [preprocess(text) for text in texts]
 
