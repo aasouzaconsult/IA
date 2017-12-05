@@ -11,16 +11,16 @@ from nltk.corpus import stopwords
 stop_words = stopwords.words('english')
 k = 3
 
-def preprocess(text):
-    text = text.lower()
-    doc = word_tokenize(text)
-    doc = [word for word in doc if word not in stop_words]
-    doc = [word for word in doc if word.isalpha()]
-    return doc
+#def preprocess(text):
+#    text = text.lower()
+#    doc = word_tokenize(text)
+#    doc = [word for word in doc if word not in stop_words]
+#    doc = [word for word in doc if word.isalpha()]
+#    return doc
 
 ng20 = fetch_20newsgroups(subset='all',remove=('headers', 'footers', 'quotes'))
 texts = ng20.data
-count = 1000
+count = 1000  #(max = 18846)
 
 document_term = TfidfVectorizer()
 matrix_document_term = document_term.fit_transform(texts[0:count]).toarray()
