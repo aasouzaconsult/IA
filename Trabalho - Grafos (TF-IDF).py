@@ -36,9 +36,8 @@ for i in range(len(matrix_document_document)):
 #     pickle.dump(matrix_document_document, output, pickle.HIGHEST_PROTOCOL)
 
 G = nx.from_numpy_matrix(matrix_adj)
-nx.draw(G)
-plt.show()
-
+#nx.draw(G)
+#plt.show()
 nx.draw(G, width=1, font_size=16, with_labels=True, alpha=0.4, node_color=range(1000))
 plt.show()
 
