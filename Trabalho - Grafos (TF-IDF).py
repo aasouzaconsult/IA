@@ -39,13 +39,15 @@ G = nx.from_numpy_matrix(matrix_adj)
 nx.draw(G)
 plt.show()
 
-nx.draw(G, font_size=16, with_labels=True)
+nx.draw(G, width=1, font_size=16, with_labels=True, alpha=0.4, node_color=range(1000))
 plt.show()
 
 
 ###########
 # Estudos #
 ###########
+
+node_color=range(1000)
 
 # Agrupamentos?
 nx.clustering(G)
