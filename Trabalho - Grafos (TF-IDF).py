@@ -52,6 +52,11 @@ nx.draw(G10, node_color='b')
 
 nx.is_isomorphic(G5,G10)
 
+# Tentativa de encontrar Isomorfismo
+for i in range(10):
+	for j in range (10):
+		print(i, j, nx.is_isomorphic(nx.complete_graph(i), nx.complete_graph(j)))
+
 ###########
 # Estudos #
 ###########
