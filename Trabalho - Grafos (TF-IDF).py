@@ -38,3 +38,40 @@ for i in range(len(matrix_document_document)):
 G = nx.from_numpy_matrix(matrix_adj)
 nx.draw(G)
 plt.show()
+
+nx.draw(G, font_size=16, with_labels=True)
+plt.show()
+
+
+###########
+# Estudos #
+###########
+
+# Agrupamentos?
+nx.clustering(G)
+
+# Grau
+nx.degree(G)
+
+# Verificar um vértice e suas relações
+a = nx.complete_graph(5)
+nx.draw(a)
+
+# Bipartido
+K_3_5=nx.complete_bipartite_graph(3,5)
+nx.draw(K_3_5)
+
+# Outros
+G.number_of_nodes()
+G.number_of_edges()
+
+G.nodes()
+G.edges()
+G.neighbors(1)
+
+nx.draw_spectral(a)
+nx.draw_random(a)
+nx.draw_circular(a)
+
+# Referências
+# https://networkx.github.io/documentation/networkx-1.10/tutorial/tutorial.html
