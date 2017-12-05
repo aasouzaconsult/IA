@@ -36,21 +36,32 @@ for i in range(len(matrix_document_document)):
 #     pickle.dump(matrix_document_document, output, pickle.HIGHEST_PROTOCOL)
 
 G = nx.from_numpy_matrix(matrix_adj)
-#nx.draw(G)
-#plt.show()
 nx.draw(G, width=1, font_size=16, with_labels=True, alpha=0.4, node_color=range(1000))
 plt.show()
+
+# Test (Completo)
+texts[7268]
+texts[2523]
+		
+texts[3793]
+texts[5655]
 
 # Agrupamentos
 nx.clustering(G)
 
+from sklearn.cluster import SpectralClustering
+sc = SpectralClustering(20, affinity='precomputed', n_init=100)
+sc.fit(matrix_adj)
+print(sc.labels_)
+np.savetxt('text.txt',mat,fmt='%.2f')
+
 # Isomorfismo
 G5 = nx.complete_graph(5)
 G10 = nx.complete_graph(10)
-nx.draw(G5)
-nx.draw(G10, node_color='b')
+nx.draw(G5, width=1, font_size=16, with_labels=True, alpha=0.4)
+nx.draw(G10, width=1, font_size=16, with_labels=True, alpha=0.4, node_color='b')
 
-nx.is_isomorphic(G5,G10)
+nx.is_isomorphic(G10,G10)
 
 # Tentativa de encontrar Isomorfismo
 for i in range(10):
@@ -61,6 +72,9 @@ for i in range(10):
 # Estudos #
 ###########
 
+# Caminho mínimo
+nx.average_shortest_path_length(G)
+
 # Grau
 nx.degree(G)
 
@@ -70,9 +84,28 @@ nx.draw(a, width=1, font_size=16, with_labels=True, alpha=0.4)
 
 # Bipartido
 K_3_5=nx.complete_bipartite_graph(3,5)
-nx.draw(K_3_5)
+nx.draw(K_3_5, width=1, font_size=16, with_labels=True, alpha=0.4)
+#or
+import networkx as nx
+from networkx.algorithms import bipartite
+B = nx.Graph()
+B.add_nodes_from([4,5,7], bipartite=0) # Add the node attribute "bipartite"
+B.add_nodes_from([654, 611], bipartite=1)
+B.add_edges_from([(4,611), (4,4), (4,654), (5,5), (5,654), (7,7), (7,654),(654,654),(611,611)])
+nx.draw_circular(B, width=1, font_size=16, with_labels=True, alpha=0.4, node_color=range(5))
 
-# Outros
+# Subgrafo (testar)
+res = [4,5,7,654,611]
+pos = nx.spring_layout(G)
+k = G.subgraph(res)
+nx.draw_networkx(k, pos=pos, node_color='b')
+othersubgraph = G.subgraph(range(4,G.order()))
+nx.draw_networkx(othersubgraph, pos=pos, node_color = 'r')
+
+# Auxiliares
+nx.info(G)
+nx.density(G)
+
 G.number_of_nodes()
 G.number_of_edges()
 
@@ -80,10 +113,19 @@ G.nodes()
 G.edges()
 G.neighbors(1)
 
-nx.draw_spectral(a)
-nx.draw_random(a)
-nx.draw_circular(a)
+##########
+# Outros #
+##########
+
+# Digrafo
+H = nx.DiGraph(G)
+list(H.edges())
+edgelist = [(0, 1), (1, 2), (2, 3)]
+H = nx.Graph(edgelist)
+nx.draw(H)
 
 # Referências
 # https://networkx.github.io/documentation/networkx-1.10/tutorial/tutorial.html
-# https://www.csie.ntu.edu.tw/~azarc/sna/networkx/networkx/algorithms/
+# https://www.csie.ntu.edu.tw/~azarc/sna/networkx/networkx/algorithms/ *
+# https://networkx.github.io/documentation/latest/tutorial.html
+# https://stackoverflow.com/questions/24829123/plot-bipartite-graph-using-networkx-in-python
