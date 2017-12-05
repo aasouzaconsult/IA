@@ -66,7 +66,7 @@ nx.degree(G)
 
 # Verificar um vértice e suas relações
 a = nx.complete_graph(5)
-nx.draw(a)
+nx.draw(a, width=1, font_size=16, with_labels=True, alpha=0.4)
 
 # Bipartido
 K_3_5=nx.complete_bipartite_graph(3,5)
