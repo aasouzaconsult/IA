@@ -42,15 +42,20 @@ plt.show()
 nx.draw(G, width=1, font_size=16, with_labels=True, alpha=0.4, node_color=range(1000))
 plt.show()
 
+# Agrupamentos
+nx.clustering(G)
+
+# Isomorfismo
+G5 = nx.complete_graph(5)
+G10 = nx.complete_graph(10)
+nx.draw(G5)
+nx.draw(G10, node_color='b')
+
+nx.is_isomorphic(G5,G10)
 
 ###########
 # Estudos #
 ###########
-
-node_color=range(1000)
-
-# Agrupamentos?
-nx.clustering(G)
 
 # Grau
 nx.degree(G)
@@ -77,3 +82,4 @@ nx.draw_circular(a)
 
 # Referências
 # https://networkx.github.io/documentation/networkx-1.10/tutorial/tutorial.html
+# https://www.csie.ntu.edu.tw/~azarc/sna/networkx/networkx/algorithms/
