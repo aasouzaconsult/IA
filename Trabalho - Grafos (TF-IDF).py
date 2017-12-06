@@ -26,8 +26,8 @@ ng20 = fetch_20newsgroups(subset='train', categories=categories, remove=('header
 #ver as categorias
 ng20.target_names
 # ou (individual - Exemplo, 10 primeiros)
-for t in twenty_train.target[:10]:
-   print(twenty_train.target_names[t])
+for t in ng20.target[:10]:
+   print(ng20.target_names[t])
 
 texts = ng20.data
 # count = 1000  #(max = 18846) # Pegando agora 3 categorias (1759 Docs)
