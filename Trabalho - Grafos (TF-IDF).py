@@ -26,8 +26,8 @@ ng20 = fetch_20newsgroups(subset='train', categories=categories, remove=('header
 #ver as categorias
 ng20.target_names
 # ou (individual - Exemplo, 10 primeiros)
-for t in ng20.target[:10]:
-   print(ng20.target_names[t])
+#for t in ng20.target[:10]:
+#   print(ng20.target_names[t])
 
 texts = ng20.data
 # count = 1000  #(max = 18846) # Pegando agora 3 categorias (1759 Docs)
@@ -92,6 +92,18 @@ nx.degree(G)
 # Verificar um vértice e suas relações
 a = nx.complete_graph(5)
 nx.draw(a, width=1, font_size=16, with_labels=True, alpha=0.4)
+
+# Caminho mínimo
+# de 0 a 4
+nx.shortest_path(G,source=0,target=4)
+print(nx.shortest_path_length(G,source=0,target=4))
+
+nx.dijkstra_path(G,source=0,target=4)
+nx.single_source_dijkstra(G, source=0) # do zero para todos os vértices
+
+nx.bellman_ford(G, source=0)
+nx.floyd_warshall(G) # lento
+nx.astar_path(G,source=0,target=4)
 
 # Bipartido
 K_3_5=nx.complete_bipartite_graph(3,5)
