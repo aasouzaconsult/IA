@@ -21,7 +21,7 @@ k = 3
 # Selecionar apenas as categorias (http://scikit-learn.org/stable/datasets/twenty_newsgroups.html)
 categories = ['sci.electronics', 'comp.sys.ibm.pc.hardware', 'comp.sys.mac.hardware']
 
-ng20 = fetch_20newsgroups(subset='train', categories=categories, remove=('headers', 'footers', 'quotes'))
+ng20 = fetch_20newsgroups(subset='train', categories=categories, remove=('headers', 'footers', 'quotes')) # subset='all'
 
 #ver as categorias
 ng20.target_names
@@ -30,7 +30,7 @@ for t in twenty_train.target[:10]:
    print(twenty_train.target_names[t])
 
 texts = ng20.data
-# count = 1000  #(max = 18846) # Pegando agora 3 categorias (2929 Docs)
+# count = 1000  #(max = 18846) # Pegando agora 3 categorias (1759 Docs)
 
 document_term = TfidfVectorizer()
 # matrix_document_term = document_term.fit_transform(texts[0:count]).toarray()
