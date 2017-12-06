@@ -139,6 +139,7 @@ nx.draw(H)
 # https://networkx.github.io/documentation/networkx-1.10/tutorial/tutorial.html
 # https://networkx.github.io/documentation/networkx-1.10/reference/functions.html
 # https://networkx.github.io/documentation/latest/tutorial.html
+# https://networkx.github.io/documentation/networkx-1.10/reference/algorithms.shortest_paths.html
 # https://www.csie.ntu.edu.tw/~azarc/sna/networkx/networkx/algorithms/ *
 # https://stackoverflow.com/questions/24829123/plot-bipartite-graph-using-networkx-in-python
 # http://scikit-learn.org/stable/tutorial/statistical_inference/unsupervised_learning.html
