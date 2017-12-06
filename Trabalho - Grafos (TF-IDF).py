@@ -30,7 +30,7 @@ for t in twenty_train.target[:10]:
    print(twenty_train.target_names[t])
 
 texts = ng20.data
-# count = 1000  #(max = 18846) # Pegando agora 3 categorias (1759 Docs)
+# count = 1000  #(max = 18846) # Pegando agora 3 categorias (2929 Docs)
 
 document_term = TfidfVectorizer()
 # matrix_document_term = document_term.fit_transform(texts[0:count]).toarray()
