@@ -83,9 +83,6 @@ for i in range(10):
 # Estudos #
 ###########
 
-# Caminho mínimo
-nx.average_shortest_path_length(G)
-
 # Grau
 nx.degree(G)
 
@@ -94,6 +91,8 @@ a = nx.complete_graph(5)
 nx.draw(a, width=1, font_size=16, with_labels=True, alpha=0.4)
 
 # Caminho mínimo
+nx.average_shortest_path_length(G)
+
 # de 0 a 4
 nx.shortest_path(G,source=0,target=4)
 print(nx.shortest_path_length(G,source=0,target=4))
