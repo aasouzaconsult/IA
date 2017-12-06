@@ -18,12 +18,23 @@ k = 3
 #    doc = [word for word in doc if word.isalpha()]
 #    return doc
 
-ng20 = fetch_20newsgroups(subset='all',remove=('headers', 'footers', 'quotes'))
+# Selecionar apenas as categorias (http://scikit-learn.org/stable/datasets/twenty_newsgroups.html)
+categories = ['sci.electronics', 'comp.sys.ibm.pc.hardware', 'comp.sys.mac.hardware']
+
+ng20 = fetch_20newsgroups(subset='all', categories=categories, remove=('headers', 'footers', 'quotes'))
+
+#ver as categorias
+ng20.target_names
+# ou (individual - Exemplo, 10 primeiros)
+for t in twenty_train.target[:10]:
+   print(twenty_train.target_names[t])
+
 texts = ng20.data
-count = 1000  #(max = 18846)
+# count = 1000  #(max = 18846) # Pegando agora 3 categorias (1759 Docs)
 
 document_term = TfidfVectorizer()
-matrix_document_term = document_term.fit_transform(texts[0:count]).toarray()
+# matrix_document_term = document_term.fit_transform(texts[0:count]).toarray()
+matrix_document_term = document_term.fit_transform(texts).toarray()
 matrix_document_document = np.dot(matrix_document_term, np.transpose(matrix_document_term))
 matrix_adj = np.zeros(shape=matrix_document_document.shape)
 
