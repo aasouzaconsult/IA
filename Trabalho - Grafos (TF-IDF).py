@@ -21,7 +21,7 @@ k = 3
 # Selecionar apenas as categorias (http://scikit-learn.org/stable/datasets/twenty_newsgroups.html)
 categories = ['sci.electronics', 'comp.sys.ibm.pc.hardware', 'comp.sys.mac.hardware']
 
-ng20 = fetch_20newsgroups(subset='all', categories=categories, remove=('headers', 'footers', 'quotes'))
+ng20 = fetch_20newsgroups(subset='train', categories=categories, remove=('headers', 'footers', 'quotes'))
 
 #ver as categorias
 ng20.target_names
