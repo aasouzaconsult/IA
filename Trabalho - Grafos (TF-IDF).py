@@ -36,7 +36,7 @@ document_term = TfidfVectorizer()
 # matrix_document_term = document_term.fit_transform(texts[0:count]).toarray()
 matrix_document_term = document_term.fit_transform(texts).toarray()
 matrix_document_document = np.dot(matrix_document_term, np.transpose(matrix_document_term))
-matrix_adj = np.zeros(shape=matrix_document_document.shape)
+matrix_adj = np.zeros(shape=matrix_document_document.shape) # Matriz de zeros no tamanho da matrix DxD
 
 for i in range(len(matrix_document_document)):
     od = sorted(dict(enumerate(matrix_document_document[i])).items(),key=operator.itemgetter(1),reverse=True)[0:k]
@@ -50,12 +50,33 @@ G = nx.from_numpy_matrix(matrix_adj)
 nx.draw(G, width=1, font_size=16, with_labels=True, alpha=0.4, node_color=range(len(texts)))
 plt.show()
 
+######################
+# Análises e Estudos #
+######################
 # Test (Completo)
 texts[7268]
 texts[2523]
 		
 texts[3793]
 texts[5655]
+
+# Informações do Grafo
+nx.info(G)
+nx.density(G)
+
+G.number_of_nodes()
+G.number_of_edges()
+
+G.nodes()
+G.edges()
+G.neighbors(1)
+
+# Grau
+nx.degree(G)
+
+# Verificar um vértice e suas relações
+a = nx.complete_graph(5)
+nx.draw(a, width=1, font_size=16, with_labels=True, alpha=0.4)
 
 # Agrupamentos
 nx.clustering(G)
@@ -78,17 +99,6 @@ nx.is_isomorphic(G10,G10)
 for i in range(10):
 	for j in range (10):
 		print(i, j, nx.is_isomorphic(nx.complete_graph(i), nx.complete_graph(j)))
-
-###########
-# Estudos #
-###########
-
-# Grau
-nx.degree(G)
-
-# Verificar um vértice e suas relações
-a = nx.complete_graph(5)
-nx.draw(a, width=1, font_size=16, with_labels=True, alpha=0.4)
 
 # Caminho mínimo
 nx.average_shortest_path_length(G)
@@ -124,27 +134,20 @@ nx.draw_networkx(k, pos=pos, node_color='b')
 othersubgraph = G.subgraph(range(4,G.order()))
 nx.draw_networkx(othersubgraph, pos=pos, node_color = 'r')
 
-# Auxiliares
-nx.info(G)
-nx.density(G)
-
-G.number_of_nodes()
-G.number_of_edges()
-
-G.nodes()
-G.edges()
-G.neighbors(1)
-
 ##########
 # Outros #
 ##########
-
 # Digrafo
 H = nx.DiGraph(G)
 list(H.edges())
 edgelist = [(0, 1), (1, 2), (2, 3)]
 H = nx.Graph(edgelist)
 nx.draw(H)
+
+# Teste - Matriz de Adjacências
+adj_matrix = np.matrix([[0,1,0,0,1,0],[1,0,1,0,1,0],[0,1,0,1,0,0],[0,0,1,0,1,1],[1,1,0,1,0,0],[0,0,0,1,0,0]])
+H = nx.from_numpy_matrix(adj_matrix)
+nx.draw(H, width=1, font_size=16, with_labels=True, alpha=0.4)
 
 # Referências
 # https://networkx.github.io/documentation/networkx-1.10/tutorial/tutorial.html
