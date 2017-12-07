@@ -171,3 +171,6 @@ nx.draw(H, width=1, font_size=16, with_labels=True, alpha=0.4)
 # https://www.csie.ntu.edu.tw/~azarc/sna/networkx/networkx/algorithms/ *
 # https://stackoverflow.com/questions/24829123/plot-bipartite-graph-using-networkx-in-python
 # http://scikit-learn.org/stable/tutorial/statistical_inference/unsupervised_learning.html
+# Clustering (k-Dijkstra)
+# http://data.conferenceworld.in/ICITTESE-17/P137-143.pdf
+# https://library.naist.jp/mylimedio/dllimedio/showpdf2.cgi/DLPDFR012264_P1-54
