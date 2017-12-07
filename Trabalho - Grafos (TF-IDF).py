@@ -1,6 +1,7 @@
 import numpy as np
 import pickle
 import operator
+import random
 import networkx as nx
 import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -9,57 +10,58 @@ from nltk import word_tokenize
 from nltk.corpus import stopwords
 
 stop_words = stopwords.words('english')
-k = 3
-
-#def preprocess(text):
-#    text = text.lower()
-#    doc = word_tokenize(text)
-#    doc = [word for word in doc if word not in stop_words]
-#    doc = [word for word in doc if word.isalpha()]
-#    return doc
+count      = 2929 # Pegando agora 3 categorias (2929 Docs) / maximo = 18846
+k          = 3    # Pegar as 3 maiores relações
+k_centers  = 2 
 
 # Selecionar apenas as categorias (http://scikit-learn.org/stable/datasets/twenty_newsgroups.html)
 categories = ['sci.electronics', 'comp.sys.ibm.pc.hardware', 'comp.sys.mac.hardware']
 
-ng20 = fetch_20newsgroups(subset='train', categories=categories, remove=('headers', 'footers', 'quotes')) # subset='all'
-
-#ver as categorias
+ng20 = fetch_20newsgroups(subset='all', categories=categories, remove=('headers', 'footers', 'quotes')) # subset='all'
 ng20.target_names
-# ou (individual - Exemplo, 10 primeiros)
-#for t in ng20.target[:10]:
-#   print(ng20.target_names[t])
 
 texts = ng20.data
-# count = 1000  #(max = 18846) # Pegando agora 3 categorias (1759 Docs)
 
+# Vazios ou em falha - Coloca uma frase padrão
+for i in range(len(texts)):
+    if len(texts[i]) <= 20:
+        texts[i] = "no text - empty document"
+
+# Matrix - TF-IDF
 document_term = TfidfVectorizer()
-# matrix_document_term = document_term.fit_transform(texts[0:count]).toarray()
 matrix_document_term = document_term.fit_transform(texts).toarray()
 matrix_document_document = np.dot(matrix_document_term, np.transpose(matrix_document_term))
+
+# Matrix de Adjacências
 matrix_adj = np.zeros(shape=matrix_document_document.shape) # Matriz de zeros no tamanho da matrix DxD
 
 for i in range(len(matrix_document_document)):
-    od = sorted(dict(enumerate(matrix_document_document[i])).items(),key=operator.itemgetter(1),reverse=True)[0:k]
+    od = sorted(dict(enumerate(matrix_document_document[i])).items(),key=operator.itemgetter(1),reverse=True)[1:k]
     for j in od:
-        matrix_adj[i,j[0]] = 1
+        matrix_adj[i,j[0]] = j[1]
 
+# Salvando...
 # with open('matrix_document_document', 'wb') as output:
 #     pickle.dump(matrix_document_document, output, pickle.HIGHEST_PROTOCOL)
 
+# Grafo
 G = nx.from_numpy_matrix(matrix_adj)
-nx.draw(G, width=1, font_size=16, with_labels=True, alpha=0.4, node_color=range(len(texts)))
+nx.draw(G, width=1, font_size=16, with_labels=True, alpha=0.4, node_color=range(count))
 plt.show()
+
+# Clustering
+centroids = random.sample(range(count), k_centers)
+
+#################
+# ? Pesquisas ? #
+#################
+# - Colorir grupos
+# - Grafos separados (o que é?)
+# - K Dijkstra
 
 ######################
 # Análises e Estudos #
 ######################
-# Test (Completo)
-texts[7268]
-texts[2523]
-		
-texts[3793]
-texts[5655]
-
 # Informações do Grafo
 nx.info(G)
 nx.density(G)
@@ -148,6 +150,18 @@ nx.draw(H)
 adj_matrix = np.matrix([[0,1,0,0,1,0],[1,0,1,0,1,0],[0,1,0,1,0,0],[0,0,1,0,1,1],[1,1,0,1,0,0],[0,0,0,1,0,0]])
 H = nx.from_numpy_matrix(adj_matrix)
 nx.draw(H, width=1, font_size=16, with_labels=True, alpha=0.4)
+
+# ver as categorias
+# ou (individual - Exemplo, 10 primeiros)
+# for t in ng20.target[:10]:
+#    print(ng20.target_names[t])
+
+#def preprocess(text):
+#    text = text.lower()
+#    doc = word_tokenize(text)
+#    doc = [word for word in doc if word not in stop_words]
+#    doc = [word for word in doc if word.isalpha()]
+#    return doc
 
 # Referências
 # https://networkx.github.io/documentation/networkx-1.10/tutorial/tutorial.html
