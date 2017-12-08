@@ -65,6 +65,7 @@ plt.show()
 # ? Pesquisas ? #
 #################
 # 1. Colorir grupos (OK)
+# - https://stackoverflow.com/questions/32931484/legend-for-networkx-draw-function
 
 # 2. Grafos separados (o que é?)
 # -- Figure 1
