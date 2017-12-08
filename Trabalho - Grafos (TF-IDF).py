@@ -46,18 +46,47 @@ for i in range(len(matrix_document_document)):
 
 # Grafo
 G = nx.from_numpy_matrix(matrix_adj)
-nx.draw(G, width=1, font_size=16, with_labels=True, alpha=0.4, node_color=range(count))
-plt.show()
+pos = nx.spring_layout(G)
 
 # Clustering
 centroids = random.sample(range(count), k_centers)
+# ...
+
+# c0 = [os demais]
+c1 = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,41,42,42,43,44,45,50,51,52,53,54,55,500,510,520,530,540,550,560,570,580,590,800,1000,2000]
+c2 = [15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,900,901,902,903,904,905,906,907,908,909,910]
+
+nx.draw_networkx(G, pos=pos, node_color='#A0CBE2', font_size=16, width=1, alpha=0.4)
+nx.draw_networkx(G, pos=pos, nodelist=c1, node_color='#FFFF00', font_size=16, width=1, alpha=0.4)
+nx.draw_networkx(G, pos=pos, nodelist=c2, node_color='#FF0000', font_size=16, width=1, alpha=0.4)
+plt.show()
 
 #################
 # ? Pesquisas ? #
 #################
-# - Colorir grupos
-# - Grafos separados (o que é?)
-# - K Dijkstra
+# 1. Colorir grupos (OK)
+
+# 2. Grafos separados (o que é?)
+# -- Figure 1
+texts[2810]
+texts[1810]
+texts[145]
+
+# -- Figure 2
+texts[1007]
+texts[877]
+texts[2800]
+texts[1373]
+texts[2581]
+texts[2833]
+texts[1675]
+
+nx.shortest_path(G,source=2800,target=1675) # Menor caminho
+
+# 3. K Dijkstra
+nx.dijkstra_path(G,source=2800,target=1675)          # (Figure 2)
+nx.single_source_dijkstra(G, source=0)               # do zero para todos os vértices
+nx.dijkstra_predecessor_and_distance(G, source=1675) # Compute shortest path length and predecessors on shortest paths in weighted graphs. (Figure 2)
 
 ######################
 # Análises e Estudos #
@@ -162,6 +191,11 @@ nx.draw(H, width=1, font_size=16, with_labels=True, alpha=0.4)
 #    doc = [word for word in doc if word not in stop_words]
 #    doc = [word for word in doc if word.isalpha()]
 #    return doc
+
+# Grafo
+#G = nx.from_numpy_matrix(matrix_adj)
+#nx.draw(G, width=1, font_size=16, with_labels=True, alpha=0.4, node_color=range(count))
+#plt.show()
 
 # Referências
 # https://networkx.github.io/documentation/networkx-1.10/tutorial/tutorial.html
