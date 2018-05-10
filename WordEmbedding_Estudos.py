@@ -6,12 +6,15 @@ import gensim
 from gensim import utils
 import numpy as np
 import sys
-from sklearn.datasets import fetch_20newsgroups
 from nltk import word_tokenize
 from nltk import download
 from nltk.corpus import stopwords
 import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_20newsgroups
 from sklearn.decomposition import PCA
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.svm import SVC
+from sklearn import metrics
 
 # Importando modelo do google
 model = gensim.models.KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin', binary=True)
@@ -26,14 +29,20 @@ def preprocess(text):
     doc = [word for word in doc if word not in stop_words]
     doc = [word for word in doc if word.isalpha()] #restricts string to alphabetic characters only
     return doc
-	
+
 ng20 = fetch_20newsgroups(subset='all',
                           remove=('headers', 'footers', 'quotes'))
 
-# text and ground truth labels
-texts, y = ng20.data, ng20.target
+ng20_train = fetch_20newsgroups(subset='train',remove=('headers', 'footers', 'quotes')) # train
+ng20_test = fetch_20newsgroups(subset='test', remove=('headers', 'footers', 'quotes')) # test
 
-corpus = [preprocess(text) for text in texts]
+# text and ground truth labels
+#texts, y = ng20.data, ng20.target
+texts, y = ng20_train.data, ng20_train.target # train
+texts_test, y_test = ng20_test.data, ng20_test.target # test
+
+corpus = [preprocess(text) for text in texts] # train
+corpus_test = [preprocess(text_test) for text_test in texts_test] # test
 
 def filter_docs(corpus, texts, labels, condition_on_doc):
     """
@@ -56,21 +65,21 @@ def filter_docs(corpus, texts, labels, condition_on_doc):
 
 # corpus - Lista de palavras
 # texts  - texto puro
-corpus, texts, y = filter_docs(corpus, texts, y, lambda doc: (len(doc) != 0))
-
+corpus, texts, y = filter_docs(corpus, texts, y, lambda doc: (len(doc) != 0)) # train
+corpus_test, texts_test, y_test = filter_docs(corpus_test, texts_test, y_test, lambda doc: (len(doc) != 0)) # test
 
 ### Remove OOV words and documents with no words in model dictionary
 def document_vector(word2vec_model, doc):
     # remove out-of-vocabulary words
-    doc = [word for word in doc if word in word2vec_model.vocab]
-    return np.mean(word2vec_model[doc], axis=0)
-	
+    doc = [word for word in doc if word in word2vec_model.vocab] # Palavras no Word2Vec para cada Documento
+    return np.mean(word2vec_model[doc], axis=0) # Média de todas as palavras(vetor 300dim) do documento (por documento)
+
 def has_vector_representation(word2vec_model, doc):
-    """check if at least one word of the document is in the
-    word2vec dictionary"""
+    """check if at least one word of the document is in the word2vec dictionary"""
     return not all(word not in word2vec_model.vocab for word in doc)
 
-corpus, texts, y = filter_docs(corpus, texts, y, lambda doc: has_vector_representation(model, doc))
+corpus, texts, y = filter_docs(corpus, texts, y, lambda doc: has_vector_representation(model, doc)) # train
+corpus_test, texts_test, y_test = filter_docs(corpus_test, texts_test, y_test, lambda doc: has_vector_representation(model, doc)) # train
 
 x =[]
 for doc in corpus: #look up each doc in model
@@ -78,12 +87,38 @@ for doc in corpus: #look up each doc in model
 
 X = np.array(x) #list to array
 
+# test
+x_test =[]
+for doc in corpus_test: #look up each doc in model
+    x_test.append(document_vector(model, doc))
+
+X_test = np.array(x_test) #list to array
+# ---------------------------------
+
 np.save('documents_vectors.npy', X)  #np.savetxt('documents_vectors.txt', X)
 np.save('labels.npy', y)             #np.savetxt('labels.txt', y)
 
-X.shape, len(y)	
+X.shape, len(y)
 
 X[1]
+X_test[1]
+
+# Testing 
+# -----------------------------------------------------
+for doc in corpus: #look up each doc in model
+    doc = [word for word in doc if word in model.vocab]
+    print doc
+    print np.mean(word2vec_model[doc], axis=0)
+
+svm = OneVsRestClassifier(SVC(kernel="linear", verbose=True)) # Modelo
+svm.fit(X, y) # Treinamento
+pred_svm = svm.predict(X_test) # predizendo
+print(metrics.classification_report(y_test, pred_svm)) # por Categoria
+
+#              precision    recall  f1-score   support
+# avg / total       0.61      0.61      0.60      7291
+
+# -----------------------------------------------------
 
 ### Sanity check
 texts[4664]
@@ -164,8 +199,18 @@ model = Word2Vec.load_word2vec_format('GoogleNews-vectors-negative300.bin', bina
 # getting word vectors of a word
 dog = model['dog']
 
-#performing king queen magic
+#performing king queen magic (slow)
 print(model.most_similar(positive=['woman', 'king'], negative=['man']))
+#[(u'queen', 0.7118192315101624), 
+# (u'monarch', 0.6189674735069275), 
+# (u'princess', 0.5902431607246399), 
+# (u'crown_prince', 0.5499460697174072), 
+# (u'prince', 0.5377321243286133), 
+# (u'kings', 0.5236844420433044), 
+# (u'Queen_Consort', 0.5235946178436279), 
+# (u'queens', 0.5181134343147278), 
+# (u'sultan', 0.5098593235015869), 
+# (u'monarchy', 0.5087411403656006)]
 
 #picking odd one out
 print(model.doesnt_match("breakfast cereal dinner lunch".split()))
@@ -181,7 +226,6 @@ from gensim.models import Word2Vec
 from nltk.corpus import brown, movie_reviews, treebank
 b = Word2Vec(brown.sents())
 b.most_similar('money', topn=5)
-
 
 # Referências
 # https://github.com/sdimi/average-word2vec/blob/master/avg_word2vec_from_documents.py
